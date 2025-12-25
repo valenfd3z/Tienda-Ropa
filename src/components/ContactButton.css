@@ -1,0 +1,58 @@
+.contact-buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.whatsapp-button,
+.instagram-button {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.whatsapp-button {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.instagram-button {
+    background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(253, 29, 29, 0.3);
+}
+
+.whatsapp-button:hover,
+.instagram-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    filter: brightness(1.1);
+}
+
+.contact-note {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+@media (max-width: 767px) {
+
+    .whatsapp-button,
+    .instagram-button {
+        padding: 14px;
+        font-size: 0.9rem;
+    }
+}

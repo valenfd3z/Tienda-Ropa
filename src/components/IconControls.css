@@ -1,0 +1,132 @@
+.icon-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.size-control {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.size-control label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.size-label {
+    font-size: 0.85rem;
+    color: #666;
+    min-width: 60px;
+}
+
+.size-label:first-child {
+    text-align: right;
+}
+
+.size-slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #e5e7eb 0%, #667eea 100%);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.size-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    transition: all 0.2s ease;
+}
+
+.size-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+}
+
+.size-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    transition: all 0.2s ease;
+}
+
+.size-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+}
+
+.size-value {
+    text-align: center;
+    font-weight: 600;
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.toggle-button,
+.reset-button {
+    flex: 1;
+    padding: 12px 15px;
+    background: white;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    color: #667eea;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.toggle-button:hover,
+.reset-button:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.toggle-button.active {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #6b7280;
+}
+
+@media (max-width: 767px) {
+    .size-label {
+        font-size: 0.75rem;
+        min-width: 50px;
+    }
+
+    .toggle-button,
+    .reset-button {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+}

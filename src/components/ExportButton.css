@@ -1,0 +1,25 @@
+.export-button {
+    width: 100%;
+    padding: 18px;
+    background: var(--surface-accent);
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.export-button:hover {
+    background: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--primary-glow);
+}
+
+.export-button:active {
+    transform: translateY(0);
+}
