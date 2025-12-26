@@ -62,51 +62,62 @@ const ShirtCanvas = ({ shirtColor, view, shirtImageOverrideUrl, selectedIcon, ic
         const width = tempCanvas.width
         const height = tempCanvas.height
 
-        // 1. Robust Background Sampling (Sample entire border)
+        // 1. Robust Background Sampling (Multi-color support for Checkerboards)
+        // Instead of averaging, we collect distinct background colors from the border
+        const bgColors = []
+        const seenColors = new Set()
+
+        const addSample = (r, g, b) => {
+            const key = `${Math.round(r / 5)},${Math.round(g / 5)},${Math.round(b / 5)}` // Binning
+            if (!seenColors.has(key)) {
+                seenColors.add(key)
+                bgColors.push([r, g, b])
+            }
+        }
+
         const getPixel = (x, y) => {
             const i = (y * width + x) * 4
             return [data[i], data[i + 1], data[i + 2]]
         }
 
-        const samples = []
-        // Sample every 10th pixel along the borders
-        for (let x = 0; x < width; x += 10) {
-            samples.push(getPixel(x, 0))
-            samples.push(getPixel(x, height - 1))
+        // Sample corners and borders
+        const borderStep = 10
+        for (let x = 0; x < width; x += borderStep) {
+            const p1 = getPixel(x, 0); addSample(p1[0], p1[1], p1[2]);
+            const p2 = getPixel(x, height - 1); addSample(p2[0], p2[1], p2[2]);
         }
-        for (let y = 0; y < height; y += 10) {
-            samples.push(getPixel(0, y))
-            samples.push(getPixel(width - 1, y))
+        for (let y = 0; y < height; y += borderStep) {
+            const p1 = getPixel(0, y); addSample(p1[0], p1[1], p1[2]);
+            const p2 = getPixel(width - 1, y); addSample(p2[0], p2[1], p2[2]);
         }
 
-        const bgR = samples.reduce((a, b) => a + b[0], 0) / samples.length
-        const bgG = samples.reduce((a, b) => a + b[1], 0) / samples.length
-        const bgB = samples.reduce((a, b) => a + b[2], 0) / samples.length
-
-        // 2. High-Precision Distance Calculation
-        let tolerance = 90 // Default higher tolerance to ensure removal
-        let feather = 8
+        // 2. Distance to NEAREST background color
+        let tolerance = 60 // Slightly lower default tolerance for multi-sample
+        let feather = 10
 
         if (shirtColor === '#6B7280') { // Gray
-            tolerance = 70
-            feather = 12
+            tolerance = 50
         } else if (shirtColor === '#000000' || shirtColor === '#1E3A8A') { // Black/Navy
-            tolerance = 80
-            feather = 10
+            tolerance = 60
         } else if (shirtColor === '#DC2626') { // Red
-            tolerance = 92
-            feather = 8
+            tolerance = 70
         }
 
         for (let i = 0; i < data.length; i += 4) {
             const r = data[i], g = data[i + 1], b = data[i + 2]
-            const dist = Math.sqrt(Math.pow(r - bgR, 2) + Math.pow(g - bgG, 2) + Math.pow(b - bgB, 2))
 
-            if (dist < tolerance - feather) {
+            // Find minimum distance to any background sample
+            let minDist = 1000
+            for (const bg of bgColors) {
+                const dist = Math.sqrt(Math.pow(r - bg[0], 2) + Math.pow(g - bg[1], 2) + Math.pow(b - bg[2], 2))
+                if (dist < minDist) minDist = dist
+            }
+
+            if (minDist < tolerance - feather) {
                 data[i + 3] = 0
-            } else if (dist < tolerance) {
+            } else if (minDist < tolerance) {
                 // Smooth transition
-                const ratio = (dist - (tolerance - feather)) / feather
+                const ratio = (minDist - (tolerance - feather)) / feather
                 data[i + 3] = ratio * 255
             }
         }
@@ -194,33 +205,13 @@ const ShirtCanvas = ({ shirtColor, view, shirtImageOverrideUrl, selectedIcon, ic
         if (!canvas) return
         const ctx = canvas.getContext('2d')
         const shirtUrl = shirtImageOverrideUrl || getBaseTshirtImageUrl(view)
-        const bgUrl = '/assets/background.png'
 
-        const drawAll = (bgImg, shirtImg, iconImg) => {
+        const drawAll = (shirtImg, iconImg) => {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
 
             // Maximum quality smoothing
             ctx.imageSmoothingEnabled = true
             ctx.imageSmoothingQuality = 'high'
-
-            // 1. Draw Background
-            if (bgImg) {
-                const bgAspect = bgImg.width / bgImg.height
-                const canvasAspect = canvas.width / canvas.height
-                let bgW, bgH, bgX, bgY
-                if (bgAspect > canvasAspect) {
-                    bgH = canvas.height
-                    bgW = bgH * bgAspect
-                    bgX = (canvas.width - bgW) / 2
-                    bgY = 0
-                } else {
-                    bgW = canvas.width
-                    bgH = bgW / bgAspect
-                    bgX = 0
-                    bgY = (canvas.height - bgH) / 2
-                }
-                ctx.drawImage(bgImg, bgX, bgY, bgW, bgH)
-            }
 
             // 2. Draw Shirt (Processed)
             if (shirtImg) {
@@ -321,11 +312,10 @@ const ShirtCanvas = ({ shirtColor, view, shirtImageOverrideUrl, selectedIcon, ic
         }
 
         Promise.all([
-            loadImg(bgUrl),
             loadImg(shirtUrl),
             selectedIcon ? loadImg(selectedIcon.src) : Promise.resolve(null)
-        ]).then(([bgImg, shirtImg, iconImg]) => {
-            drawAll(bgImg, shirtImg, iconImg)
+        ]).then(([shirtImg, iconImg]) => {
+            drawAll(shirtImg, iconImg)
         })
     }
 

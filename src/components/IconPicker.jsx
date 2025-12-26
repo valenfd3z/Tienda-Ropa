@@ -86,7 +86,7 @@ const IconPicker = ({ selectedIcon, onIconChange }) => {
                 <input
                     ref={fileInputRef}
                     type="file"
-                    accept=".png,.svg"
+                    accept="image/png, image/svg+xml"
                     onChange={handleFileUpload}
                     style={{ display: 'none' }}
                 />
