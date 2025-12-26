@@ -58,13 +58,13 @@ const IconPicker = ({ selectedIcon, onIconChange }) => {
         // Read file and convert to data URL
         const reader = new FileReader()
         reader.onload = (event) => {
-            onIconChange(event.target.result)
+            onIconChange({ src: event.target.result, isPreset: false })
         }
         reader.readAsDataURL(file)
     }
 
     const handleIconSelect = (svg) => {
-        onIconChange(svg)
+        onIconChange({ src: svg, isPreset: true })
     }
 
     return (
@@ -73,7 +73,7 @@ const IconPicker = ({ selectedIcon, onIconChange }) => {
                 {defaultIcons.map((icon) => (
                     <button
                         key={icon.id}
-                        className={`icon-option ${selectedIcon === icon.svg ? 'selected' : ''}`}
+                        className={`icon-option ${selectedIcon?.src === icon.svg ? 'selected' : ''}`}
                         onClick={() => handleIconSelect(icon.svg)}
                         title={icon.name}
                     >

@@ -273,10 +273,14 @@ const ShirtCanvas = ({ shirtColor, view, shirtImageOverrideUrl, selectedIcon, ic
                 ctx.shadowBlur = 10
                 ctx.shadowOffsetY = 3
 
-                if (isColorDark(shirtColor)) {
-                    ctx.filter = 'invert(1) brightness(1.1)'
-                } else {
-                    ctx.filter = 'brightness(0.2)'
+                // Apply filters ONLY if it is a preset icon (monochrome SVG)
+                // User uploaded images should keep their original colors
+                if (selectedIcon.isPreset) {
+                    if (isColorDark(shirtColor)) {
+                        ctx.filter = 'invert(1) brightness(1.1)'
+                    } else {
+                        ctx.filter = 'brightness(0.2)'
+                    }
                 }
 
                 ctx.drawImage(iconImg, iconPosition.x - iconSize / 2, iconPosition.y - iconSize / 2, iconSize, iconSize)
@@ -319,7 +323,7 @@ const ShirtCanvas = ({ shirtColor, view, shirtImageOverrideUrl, selectedIcon, ic
         Promise.all([
             loadImg(bgUrl),
             loadImg(shirtUrl),
-            selectedIcon ? loadImg(selectedIcon) : Promise.resolve(null)
+            selectedIcon ? loadImg(selectedIcon.src) : Promise.resolve(null)
         ]).then(([bgImg, shirtImg, iconImg]) => {
             drawAll(bgImg, shirtImg, iconImg)
         })
