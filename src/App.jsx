@@ -17,8 +17,8 @@ function App() {
     const [size, setSize] = useState('M')
     const [view, setView] = useState('front')
     const [selectedIcon, setSelectedIcon] = useState(null)
-    const [iconPosition, setIconPosition] = useState({ x: 200, y: 250 })
-    const [iconSize, setIconSize] = useState(100)
+    const [iconPosition, setIconPosition] = useState({ x: 300, y: 375 })
+    const [iconSize, setIconSize] = useState(150)
     const [canvasRef, setCanvasRef] = useState(null)
     const [showSelection, setShowSelection] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -117,7 +117,7 @@ function App() {
                                 onIconSizeChange={setIconSize}
                                 showSelection={showSelection}
                                 onToggleSelection={() => setShowSelection(!showSelection)}
-                                onResetPosition={() => setIconPosition({ x: 200, y: 250 })}
+                                onResetPosition={() => setIconPosition({ x: 300, y: 375 })}
                             />
                         </div>
                     )}

@@ -1,15 +1,15 @@
 .size-selector {
     display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 15px 0;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    justify-content: center;
+    /* Centered instead of space-between */
+    gap: 20px;
+    /* Consistent gap */
+    padding: 20px 0;
+    /* Removed overflow-x to prevent clipping the 'glow' effect */
 }
 
 .size-button {
     width: 75px;
-    /* Even larger */
     height: 75px;
     display: flex;
     align-items: center;
@@ -22,28 +22,25 @@
     font-size: 1.5rem;
     font-weight: 900;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 5px 0 var(--border-color);
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 0 var(--border-color);
 }
 
 .size-button:hover {
     border-color: var(--accent-color);
     color: var(--accent-color);
-    transform: scale(1.2) rotate(-5deg);
-    box-shadow: 0 10px 0 rgba(0, 242, 255, 0.2);
 }
 
 .size-button.selected {
     background: var(--accent-color);
     border-color: var(--accent-color);
     color: #000;
-    transform: scale(1.25);
-    box-shadow: 0 0 30px rgba(0, 242, 255, 0.6), 0 5px 0 #008c99;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.4), 0 4px 0 #008c99;
 }
 
 .size-button:active {
-    transform: scale(1.1);
-    box-shadow: 0 2px 0 rgba(0, 242, 255, 0.2);
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--border-color);
 }
 
 @media (max-width: 767px) {

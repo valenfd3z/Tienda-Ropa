@@ -439,8 +439,8 @@ const ShirtCanvas = ({ shirtColor, view, shirtImageOverrideUrl, selectedIcon, ic
             </div>
             <canvas
                 ref={canvasRef}
-                width={400}
-                height={500}
+                width={600}
+                height={750}
                 className={`shirt-canvas ${isTransitioning ? 'transitioning' : ''}`}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
