@@ -54,7 +54,7 @@ const ShirtCanvas = ({ shirtColor, view, shirtImageOverrideUrl, selectedIcon, ic
                 localDragOffset = { x: x - iconPosition.x, y: y - iconPosition.y }
 
                 setIsDragging(true)
-                setDragOffset(localDragOffset) // Sync state for consistency if needed
+                setDragOffset(localDragOffset)
             }
         }
 
@@ -367,7 +367,7 @@ const ShirtCanvas = ({ shirtColor, view, shirtImageOverrideUrl, selectedIcon, ic
             }
 
             // 4. Labels
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.9)'
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
             ctx.font = 'bold 14px sans-serif'
             ctx.textAlign = 'center'
             const viewLabel = view === 'front' ? 'FRENTE' : 'ESPALDA'
@@ -432,37 +432,11 @@ const ShirtCanvas = ({ shirtColor, view, shirtImageOverrideUrl, selectedIcon, ic
         })
     }
 
-    const handleTouchStart = (e) => {
-        if (!selectedIcon) return
-        const rect = canvasRef.current.getBoundingClientRect()
-        const touch = e.touches[0]
-        const x = (touch.clientX - rect.left) * (canvasRef.current.width / rect.width)
-        const y = (touch.clientY - rect.top) * (canvasRef.current.height / rect.height)
-
-        // Only block scrolling if we are touching the icon
-        if (x >= iconPosition.x - iconSize / 2 && x <= iconPosition.x + iconSize / 2 &&
-            y >= iconPosition.y - iconSize / 2 && y <= iconPosition.y + iconSize / 2) {
-            e.preventDefault() // Block scroll ONLY when dragging
-            setIsDragging(true)
-            setDragOffset({ x: x - iconPosition.x, y: y - iconPosition.y })
-        }
-    }
-
-    const handleTouchMove = (e) => {
-        if (!isDragging) return
-        e.preventDefault()
-        const rect = canvasRef.current.getBoundingClientRect()
-        const touch = e.touches[0]
-        const x = (touch.clientX - rect.left) * (canvasRef.current.width / rect.width)
-        const y = (touch.clientY - rect.top) * (canvasRef.current.height / rect.height)
-        onIconPositionChange({
-            x: Math.max(iconSize / 2, Math.min(canvasRef.current.width - iconSize / 2, x - dragOffset.x)),
-            y: Math.max(iconSize / 2, Math.min(canvasRef.current.height - iconSize / 2, y - dragOffset.y))
-        })
-    }
-
     return (
         <div className="shirt-canvas-container" ref={containerRef}>
+            <div className="canvas-instructions">
+                <p>💡 <strong>Arrastrá el diseño</strong> para posicionarlo.</p>
+            </div>
             <canvas
                 ref={canvasRef}
                 width={400}
@@ -474,9 +448,6 @@ const ShirtCanvas = ({ shirtColor, view, shirtImageOverrideUrl, selectedIcon, ic
                 onMouseLeave={() => setIsDragging(false)}
                 style={{ cursor: isDragging ? 'grabbing' : (selectedIcon ? 'grab' : 'default') }}
             />
-            <div className="canvas-instructions">
-                <p>💡 <strong>Arrastrá el diseño</strong> para posicionarlo.</p>
-            </div>
         </div>
     )
 }

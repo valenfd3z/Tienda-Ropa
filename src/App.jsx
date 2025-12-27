@@ -52,11 +52,11 @@ function App() {
             <header className="app-header">
                 <div className="header-top">
                     <h1>👕 NAZARENO CUSTOMS</h1>
-                    <button className="help-button" onClick={() => setIsModalOpen(true)}>
-                        ❓ CÓMO USAR
-                    </button>
                 </div>
                 <p>Simulador de remeras estampadas premium</p>
+                <button className="help-button" onClick={() => setIsModalOpen(true)}>
+                    ❓ CÓMO USAR
+                </button>
             </header>
 
             <HowToUse isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
@@ -126,9 +126,10 @@ function App() {
                         <ExportButton canvasRef={canvasRef} />
                         <ContactButton size={size} shirtColor={shirtColor} view={view} />
                     </div>
+                    <Footer className="mobile-footer" />
                 </div>
             </div>
-            <Footer />
+            <Footer className="desktop-footer" />
         </div>
     )
 }

@@ -8,45 +8,25 @@ const HowToUse = ({ isOpen, onClose }) => {
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <button className="close-button" onClick={onClose}>&times;</button>
                 <h2>📖 CÓMO USAR EL SIMULADOR</h2>
-
                 <div className="instruction-step">
-                    <h3>1. Elegí tu Base</h3>
-                    <p>Seleccioná el <strong>Color</strong> y el <strong>Talle</strong> de la remera. Podés alternar entre el <strong>Frente</strong> y la <strong>Espalda</strong>.</p>
-                    <div className="important-note">
-                        <p>💡 El simulador usa una <strong>remera blanca base</strong> y genera los otros colores automáticamente, manteniendo el mismo modelo y dimensiones.</p>
-                    </div>
+                    <h3>1. Bases del Diseño</h3>
+                    <p>Elige el <strong>color</strong> y el <strong>talle</strong> de tu remera. Puedes alternar entre la vista de <strong>Frente</strong> y <strong>Espalda</strong> en cualquier momento.</p>
                 </div>
-
                 <div className="instruction-step">
-                    <h3>2. Personalizá tu Diseño</h3>
-                    <p>Elegí uno de nuestros iconos o <strong>¡subí el tuyo propio!</strong></p>
-                    <div className="important-note">
-                        <p>💡 <strong>IMPORTANTE:</strong> No te limites a los iconos que ves acá. Si tenés una imagen propia, podés subirla haciendo clic en <strong>"SUBIR TU DISEÑO"</strong>. Recomendamos usar archivos <strong>PNG con fondo transparente</strong> para un mejor resultado.</p>
-                    </div>
+                    <h3>2. Elige tu Estampado</h3>
+                    <p>Selecciona uno de nuestros diseños exclusivos o <strong>¡sube el tuyo!</strong> Haz clic en "Subir tu Diseño" para usar tus propias imágenes (se recomiendan archivos <strong>PNG con fondo transparente</strong>).</p>
                 </div>
-
                 <div className="instruction-step">
-                    <h3>3. Cambiar la Foto de la Remera (Opcional)</h3>
-                    <p>Si ya tenés una remera real, podés subir una foto desde <strong>"Imagen de la Remera"</strong> para tener una <strong>vista previa</strong>. La foto se guarda por <strong>color</strong> y por <strong>vista</strong> (frente/espalda).</p>
-                    <div className="important-note">
-                        <p>💡 Esta foto es solo de referencia y no reemplaza el mockup del simulador. Podés quitarla con <strong>"Quitar foto"</strong>. La remera blanca base no se modifica.</p>
-                    </div>
+                    <h3>3. Ajusta y Personaliza</h3>
+                    <p>Mantén presionado y <strong>arrastra el diseño</strong> sobre la remera para ubicarlo donde prefieras. Utiliza los controles para ajustar el <strong>tamaño</strong> de la estampa.</p>
                 </div>
-
                 <div className="instruction-step">
-                    <h3>4. Ajustá y Posicioná</h3>
-                    <p>Arrastrá el diseño sobre la remera para ubicarlo donde quieras. Usá el control de <strong>Tamaño</strong> para ajustarlo a tu gusto.</p>
+                    <h3>4. Exporta y Comparte</h3>
+                    <p>Una vez que tu diseño esté listo, haz clic en <strong>"DESCARGAR DISEÑO"</strong>. La imagen se guardará en tu dispositivo y podrás enviárnosla por <strong>WhatsApp</strong> o <strong>Instagram</strong> para concretar tu pedido.</p>
                 </div>
-
-                <div className="instruction-step">
-                    <h3>5. Descargá y Consultá</h3>
-                    <p>Hacé clic en <strong>"DESCARGAR DISEÑO"</strong> para guardar la imagen. Luego, envianos la foto por <strong>WhatsApp</strong> o <strong>Instagram</strong> para que hagamos tu remera realidad.</p>
-                </div>
-
                 <div className="important-note warning">
-                    <p>⚠️ <strong>RECORDÁ:</strong> Para que se vea mejor, recomendamos subir imágenes en buena calidad y, si es posible, con fondo lo más uniforme posible.</p>
+                    <p>⚠️ <strong>CONSEJO PRO:</strong> El simulador es una herramienta visual. Cuando nos contactes, nos pondremos de acuerdo con los detalles finales para que tu remera quede impecable.</p>
                 </div>
-
                 <button className="got-it-button" onClick={onClose}>¡ENTENDIDO!</button>
             </div>
         </div>

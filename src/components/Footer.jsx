@@ -1,8 +1,8 @@
 import './Footer.css'
 
-const Footer = () => {
+const Footer = ({ className }) => {
     return (
-        <footer className="app-footer">
+        <footer className={`app-footer ${className ? className : ''}`}>
             <div className="footer-content">
                 <div className="footer-logo">👕 NAZARENO CUSTOMS</div>
                 <p className="footer-thanks">¡Gracias por visitar mi simulador! Espero que hayas podido crear el diseño de tus sueños.</p>
@@ -12,5 +12,7 @@ const Footer = () => {
         </footer>
     )
 }
+
+
 
 export default Footer

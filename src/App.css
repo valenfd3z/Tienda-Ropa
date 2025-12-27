@@ -5,6 +5,12 @@
     margin: 0 auto;
     position: relative;
     z-index: 1;
+    padding-bottom: 300px;
+    /* extra space for footer and scrolling on mobile */
+}
+
+.mobile-footer {
+    display: none;
 }
 
 .app-header {
@@ -293,34 +299,114 @@
     }
 
     .canvas-section {
-        position: static;
+        position: sticky;
+        top: 20px;
+        z-index: 100;
+        background: var(--bg-color);
+        padding-bottom: 10px;
+        pointer-events: none;
+    }
+
+    .canvas-section>* {
+        pointer-events: auto;
+        /* Re-enable pointer events on children */
     }
 }
 
 @media (max-width: 767px) {
+
+    /* 1. Hide the main footer on mobile and show card footer */
+    .desktop-footer {
+        display: none !important;
+    }
+
+    .mobile-footer {
+        display: block !important;
+    }
+
     .app-header h1 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+        margin-bottom: 5px;
+    }
+
+    .app-header p {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
     }
 
     .app {
-        padding: 40px 15px;
-    }
-
-    .controls-section {
-        padding: 25px;
-    }
-
-    .intro-section {
-        padding: 25px;
-    }
-
-    .help-button {
-        position: static;
-        margin: 10px auto 0;
-        width: fit-content;
+        padding: 40px 10px;
+        height: auto;
+        overflow: visible;
+        display: block;
     }
 
     .header-top {
+        display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    /* 2. Reposition HELP button: Center below description */
+    .help-button {
+        position: relative;
+        margin: 10px auto 30px;
+        padding: 12px 24px;
+        font-size: 0.85rem;
+        border-radius: 50px;
+        display: flex;
+        width: fit-content;
+    }
+
+    .intro-section {
+        display: block;
+        margin-top: 20px;
+    }
+
+    .app-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+    }
+
+    /* 3. Sticky Shirt - LARGER SCALE */
+    .canvas-section {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--bg-color);
+        padding: 5px 0;
+        border-bottom: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .canvas-section>* {
+        pointer-events: auto;
+        transform: scale(0.95);
+        /* ENLARGED to fill screen */
+        margin: -10px 0;
+    }
+
+    /* 4. Proportional Controls Card */
+    .controls-section {
+        background: var(--surface-color);
+        border-radius: 32px 32px 0 0;
+        margin-top: 5px;
+        width: 100%;
+        position: relative;
+        z-index: 90;
+        padding: 25px 20px;
+        padding-bottom: 120px;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .control-group {
+        margin-bottom: 35px;
     }
 }
