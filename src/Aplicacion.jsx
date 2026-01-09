@@ -22,15 +22,26 @@ function Aplicacion() {
     const [talle, setTalle] = useState('M')
     const [vista, setVista] = useState('front')
 
-    // Estado del diseño/estampa
-    const [iconoSeleccionado, setIconoSeleccionado] = useState(null)
-    const [posicionIcono, setPosicionIcono] = useState({ x: 300, y: 375 })
-    const [tamanioIcono, setTamanioIcono] = useState(150)
+    // Estado de estampas por lado
+    const [estampas, setEstampas] = useState({
+        front: { icono: null, posicion: { x: 300, y: 375 }, tamanio: 150 },
+        back: { icono: null, posicion: { x: 300, y: 375 }, tamanio: 150 }
+    })
 
     // Referencias y UI
     const [refCanvas, setRefCanvas] = useState(null)
     const [mostrarSeleccion, setMostrarSeleccion] = useState(true)
     const [estaModalAbierto, setEstaModalAbierto] = useState(false)
+
+    // Funciones de actualización para la estampa actual
+    const actualizarEstampaActual = (cambios) => {
+        setEstampas(prev => ({
+            ...prev,
+            [vista]: { ...prev[vista], ...cambios }
+        }))
+    }
+
+    const estampaActual = estampas[vista]
 
     // Mapeo de colores hex a nombres (para rutas de imágenes)
     const obtenerNombreColor = (color) => {
@@ -81,13 +92,11 @@ function Aplicacion() {
                         colorRemera={colorRemera}
                         vista={vista}
                         urlImagenRemeraPersonalizada={null}
-                        iconoSeleccionado={iconoSeleccionado}
-                        posicionIcono={posicionIcono}
-                        tamanioIcono={tamanioIcono}
+                        estampas={estampas}
                         mostrarSeleccion={mostrarSeleccion}
                         talle={talle}
                         alPrepararLienzo={setRefCanvas}
-                        alCambiarPosicionIcono={setPosicionIcono}
+                        alCambiarPosicionIcono={(posicion) => actualizarEstampaActual({ posicion })}
                     />
                 </div>
 
@@ -108,25 +117,33 @@ function Aplicacion() {
                     </div>
 
                     <div className="grupo-control">
-                        <h3>Elegí tu Diseño</h3>
-                        <SelectorIcono iconoSeleccionado={iconoSeleccionado} alCambiarIcono={setIconoSeleccionado} />
+                        <h3>Elegí tu Diseño ({vista === 'front' ? 'FRENTE' : 'ESPALDA'})</h3>
+                        <SelectorIcono
+                            iconoSeleccionado={estampaActual.icono}
+                            alCambiarIcono={(icono) => actualizarEstampaActual({ icono })}
+                        />
                     </div>
 
-                    {iconoSeleccionado && (
+                    {estampaActual.icono && (
                         <div className="grupo-control">
                             <h3>Ajustar Diseño</h3>
                             <ControlesIcono
-                                tamanioIcono={tamanioIcono}
-                                alCambiarTamanioIcono={setTamanioIcono}
+                                tamanioIcono={estampaActual.tamanio}
+                                alCambiarTamanioIcono={(tamanio) => actualizarEstampaActual({ tamanio })}
                                 mostrarSeleccion={mostrarSeleccion}
                                 alAlternarSeleccion={() => setMostrarSeleccion(!mostrarSeleccion)}
-                                alReiniciarPosicion={() => setPosicionIcono({ x: 300, y: 375 })}
+                                alReiniciarPosicion={() => actualizarEstampaActual({ posicion: { x: 300, y: 375 } })}
                             />
                         </div>
                     )}
 
                     <div className="botones-accion">
-                        <BotonExportar refCanvas={refCanvas} />
+                        <BotonExportar
+                            refCanvas={refCanvas}
+                            colorRemera={colorRemera}
+                            talle={talle}
+                            estampas={estampas}
+                        />
                         <BotonContacto talle={talle} colorRemera={colorRemera} vista={vista} />
                     </div>
 
@@ -140,3 +157,4 @@ function Aplicacion() {
 }
 
 export default Aplicacion
+
