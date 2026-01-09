@@ -14,7 +14,8 @@ const Particulas = () => {
         const ctx = canvas.getContext('2d')
         let idAnimacion
         let particulas = []
-        const cantidadParticulas = 60
+        const esMobile = window.innerWidth < 768
+        const cantidadParticulas = esMobile ? 20 : 60
 
         const ajustarTamanio = () => {
             canvas.width = window.innerWidth

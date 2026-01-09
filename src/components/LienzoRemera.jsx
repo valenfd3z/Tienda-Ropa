@@ -200,61 +200,67 @@ const LienzoRemera = ({
         return lienzoTemp
     }
 
+    const refRemeraFinalCache = useRef({ front: null, back: null, params: '' })
+
     const renderizarCara = useCallback((canvas, v, diseno, forzarMostrarSeleccion) => {
         if (!canvas) return
         const ctx = canvas.getContext('2d')
-        const urlRemera = obtenerUrlRemeraBase(v)
+        const esMobile = window.innerWidth < 768
 
-        const dibujarTodo = (imgRemera, imgIcono) => {
+        const dibujarTodo = async () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
-            ctx.imageSmoothingEnabled = true
-            ctx.imageSmoothingQuality = 'high'
 
-            if (imgRemera) {
+            // --- Optimización: Cache de Remera Procesada ---
+            const paramsActuales = `${colorRemera}`
+            if (refRemeraFinalCache.current[v]?.params !== paramsActuales) {
+                const urlRemera = obtenerUrlRemeraBase(v)
+                const imgRemera = await cargarImagen(urlRemera)
                 const remeraSinFondo = eliminarFondo(imgRemera)
-                if (!remeraSinFondo.__src) remeraSinFondo.__src = imgRemera.src
-                const remeraFinal = (colorRemera !== '#FFFFFF') ? tenirRemera(remeraSinFondo, colorRemera) : remeraSinFondo
-                const relacionAspecto = remeraFinal.width / remeraFinal.height
+                const remeraProcesada = (colorRemera !== '#FFFFFF') ? tenirRemera(remeraSinFondo, colorRemera) : remeraSinFondo
 
-                let sW, sH, sX, sY
-                const escala = 0.92
-                sW = canvas.width * escala
-                sH = sW / relacionAspecto
-                if (sH > canvas.height * 0.92) {
-                    sH = canvas.height * 0.92
-                    sW = sH * relacionAspecto
+                refRemeraFinalCache.current[v] = {
+                    canvas: remeraProcesada,
+                    params: paramsActuales
                 }
-                sX = (canvas.width - sW) / 2
-                sY = (canvas.height - sH) / 2
+            }
 
-                if (colorRemera === '#000000') {
-                    ctx.save()
-                    ctx.shadowColor = 'rgba(255,255,255,0.85)'
-                    ctx.shadowBlur = 4
-                    ctx.drawImage(remeraFinal, sX, sY, sW, sH)
-                    ctx.restore()
-                }
+            const remeraFinal = refRemeraFinalCache.current[v].canvas
+            const relacionAspecto = remeraFinal.width / remeraFinal.height
+            let sW = canvas.width * 0.92
+            let sH = sW / relacionAspecto
+            if (sH > canvas.height * 0.92) {
+                sH = canvas.height * 0.92
+                sW = sH * relacionAspecto
+            }
+            const sX = (canvas.width - sW) / 2
+            const sY = (canvas.height - sH) / 2
 
+            // Dibujar Remera (Sin sombras pesadas en mobile)
+            if (!esMobile) {
                 ctx.save()
-                ctx.shadowColor = 'rgba(0,0,0,0.6)'
-                ctx.shadowBlur = 3
-                ctx.shadowOffsetY = 2
+                ctx.shadowColor = 'rgba(0,0,0,0.4)'
+                ctx.shadowBlur = 10
+                ctx.shadowOffsetY = 4
                 ctx.drawImage(remeraFinal, sX, sY, sW, sH)
                 ctx.restore()
-
+            } else {
                 ctx.drawImage(remeraFinal, sX, sY, sW, sH)
             }
 
-            if (imgIcono && diseno.icono) {
+            // Dibujar Diseño
+            if (diseno.icono) {
+                const imgIcono = await cargarImagen(diseno.icono.src)
                 ctx.save()
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'
-                ctx.shadowBlur = 10
-                ctx.shadowOffsetY = 3
+                if (!esMobile) {
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'
+                    ctx.shadowBlur = 8
+                    ctx.shadowOffsetY = 3
+                }
                 ctx.drawImage(imgIcono, diseno.posicion.x - diseno.tamanio / 2, diseno.posicion.y - diseno.tamanio / 2, diseno.tamanio, diseno.tamanio)
                 ctx.restore()
 
                 if (forzarMostrarSeleccion && v === vista) {
-                    ctx.strokeStyle = 'rgba(102, 126, 234, 0.8)'
+                    ctx.strokeStyle = '#667eea'
                     ctx.lineWidth = 2
                     ctx.setLineDash([5, 5])
                     ctx.strokeRect(diseno.posicion.x - diseno.tamanio / 2, diseno.posicion.y - diseno.tamanio / 2, diseno.tamanio, diseno.tamanio)
@@ -262,13 +268,11 @@ const LienzoRemera = ({
                 }
             }
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+            // Labels básicos
+            ctx.fillStyle = 'white'
             ctx.font = 'bold 14px sans-serif'
             ctx.textAlign = 'center'
             ctx.fillText(v === 'front' ? 'FRENTE' : 'ESPALDA', canvas.width / 2, canvas.height - 15)
-            ctx.textAlign = 'left'
-            ctx.font = 'bold 18px sans-serif'
-            ctx.fillText(`TALLE: ${talle}`, 20, 35)
         }
 
         const cargarImagen = (url) => {
@@ -284,10 +288,7 @@ const LienzoRemera = ({
             })
         }
 
-        Promise.all([
-            cargarImagen(urlRemera),
-            diseno.icono ? cargarImagen(diseno.icono.src) : Promise.resolve(null)
-        ]).then(([imgRemera, imgIcono]) => dibujarTodo(imgRemera, imgIcono))
+        dibujarTodo()
     }, [colorRemera, talle, vista])
 
     // Efecto para renderizar el frente
