@@ -1,10 +1,11 @@
-.color-picker {
+/* Selector de Color */
+.selector-color {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
     gap: 10px;
 }
 
-.color-option {
+.opcion-color {
     width: 100%;
     aspect-ratio: 1;
     border: 2px solid var(--border-color);
@@ -14,17 +15,17 @@
     position: relative;
 }
 
-.color-option:hover {
+.opcion-color:hover {
     transform: scale(1.1);
     border-color: var(--primary-color);
 }
 
-.color-option.selected {
+.opcion-color.seleccionado {
     border-color: var(--primary-color);
     box-shadow: 0 0 15px var(--primary-glow);
 }
 
-.checkmark {
+.marca-cotejo {
     position: absolute;
     top: 50%;
     left: 50%;

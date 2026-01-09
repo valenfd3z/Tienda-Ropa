@@ -1,47 +1,49 @@
-.icon-controls {
+/* Controles del Icono */
+.controles-icono {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.size-control {
+.control-tamanio {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.size-control label {
+.control-tamanio label {
     font-weight: 600;
     color: #333;
     font-size: 0.95rem;
 }
 
-.slider-container {
+.contenedor-deslizador {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.size-label {
+.etiqueta-tamanio {
     font-size: 0.85rem;
     color: #666;
     min-width: 60px;
 }
 
-.size-label:first-child {
+.etiqueta-tamanio:first-child {
     text-align: right;
 }
 
-.size-slider {
+.deslizador-tamanio {
     flex: 1;
     height: 6px;
     border-radius: 3px;
     background: linear-gradient(to right, #e5e7eb 0%, #667eea 100%);
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
 }
 
-.size-slider::-webkit-slider-thumb {
+.deslizador-tamanio::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 20px;
@@ -53,12 +55,12 @@
     transition: all 0.2s ease;
 }
 
-.size-slider::-webkit-slider-thumb:hover {
+.deslizador-tamanio::-webkit-slider-thumb:hover {
     transform: scale(1.2);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
 }
 
-.size-slider::-moz-range-thumb {
+.deslizador-tamanio::-moz-range-thumb {
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -69,25 +71,25 @@
     transition: all 0.2s ease;
 }
 
-.size-slider::-moz-range-thumb:hover {
+.deslizador-tamanio::-moz-range-thumb:hover {
     transform: scale(1.2);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
 }
 
-.size-value {
+.valor-tamanio {
     text-align: center;
     font-weight: 600;
     color: #667eea;
     font-size: 1.1rem;
 }
 
-.button-group {
+.grupo-botones {
     display: flex;
     gap: 10px;
 }
 
-.toggle-button,
-.reset-button {
+.boton-alternar,
+.boton-reiniciar {
     flex: 1;
     padding: 12px 15px;
     background: white;
@@ -104,28 +106,28 @@
     gap: 5px;
 }
 
-.toggle-button:hover,
-.reset-button:hover {
+.boton-alternar:hover,
+.boton-reiniciar:hover {
     background: #667eea;
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.toggle-button.active {
+.boton-alternar.activo {
     background: #f3f4f6;
     border-color: #d1d5db;
     color: #6b7280;
 }
 
 @media (max-width: 767px) {
-    .size-label {
+    .etiqueta-tamanio {
         font-size: 0.75rem;
         min-width: 50px;
     }
 
-    .toggle-button,
-    .reset-button {
+    .boton-alternar,
+    .boton-reiniciar {
         padding: 10px 12px;
         font-size: 0.85rem;
     }

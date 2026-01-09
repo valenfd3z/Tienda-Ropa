@@ -1,0 +1,142 @@
+/*
+ * Componente principal - Simulador de Remeras Nazareno Customs
+ * Maneja el estado global: color, talle, vista y diseño seleccionado.
+ */
+import { useState } from 'react'
+import './Aplicacion.css'
+import LienzoRemera from './components/LienzoRemera'
+import SelectorColor from './components/SelectorColor'
+import SelectorTalle from './components/SelectorTalle'
+import AlternadorVista from './components/AlternadorVista'
+import SelectorIcono from './components/SelectorIcono'
+import ControlesIcono from './components/ControlesIcono'
+import BotonExportar from './components/BotonExportar'
+import BotonContacto from './components/BotonContacto'
+import Particulas from './components/Particulas'
+import ComoUsar from './components/ComoUsar'
+import PiePagina from './components/PiePagina'
+
+function Aplicacion() {
+    // Estado de la remera
+    const [colorRemera, setColorRemera] = useState('#FFFFFF')
+    const [talle, setTalle] = useState('M')
+    const [vista, setVista] = useState('front')
+
+    // Estado del diseño/estampa
+    const [iconoSeleccionado, setIconoSeleccionado] = useState(null)
+    const [posicionIcono, setPosicionIcono] = useState({ x: 300, y: 375 })
+    const [tamanioIcono, setTamanioIcono] = useState(150)
+
+    // Referencias y UI
+    const [refCanvas, setRefCanvas] = useState(null)
+    const [mostrarSeleccion, setMostrarSeleccion] = useState(true)
+    const [estaModalAbierto, setEstaModalAbierto] = useState(false)
+
+    // Mapeo de colores hex a nombres (para rutas de imágenes)
+    const obtenerNombreColor = (color) => {
+        const mapaColores = {
+            '#FFFFFF': 'white',
+            '#6B7280': 'darkgray',
+            '#000000': 'black',
+            '#1E3A8A': 'navy',
+            '#DC2626': 'red',
+            '#16A34A': 'green',
+            '#06B6D4': 'turquoise',
+            '#7C3AED': 'purple',
+            '#EC4899': 'pink',
+            '#F97316': 'orange',
+            '#FACC15': 'yellow',
+        }
+        return mapaColores[color] || 'white'
+    }
+
+    return (
+        <div className="aplicacion">
+            <Particulas />
+
+            <header className="cabecera-app">
+                <div className="cabecera-superior">
+                    <h1>👕 NAZARENO CUSTOMS</h1>
+                </div>
+                <p>Simulador de remeras estampadas premium</p>
+                <button className="boton-ayuda" onClick={() => setEstaModalAbierto(true)}>
+                    ❓ CÓMO USAR
+                </button>
+            </header>
+
+            <ComoUsar estaAbierto={estaModalAbierto} alCerrar={() => setEstaModalAbierto(false)} />
+
+            <section className="seccion-intro">
+                <div className="contenido-intro">
+                    <h2>🧢 ¡Hola! Soy Nazareno</h2>
+                    <p>Tu diseñador de confianza para <strong>remeras estampadas personalizadas</strong>.</p>
+                    <p>Si estás pensando en crear algo único, podés escribirme directamente. Si ya tenés una idea en mente, usá este simulador para darle vida y mostramelo.</p>
+                    <p>Cualquier consulta, no dudes en contactarme por WhatsApp o Instagram. <strong>¡Hagamos que tu estilo destaque!</strong></p>
+                </div>
+            </section>
+
+            <div className="contenedor-app">
+                <div className="seccion-lienzo">
+                    <LienzoRemera
+                        colorRemera={colorRemera}
+                        vista={vista}
+                        urlImagenRemeraPersonalizada={null}
+                        iconoSeleccionado={iconoSeleccionado}
+                        posicionIcono={posicionIcono}
+                        tamanioIcono={tamanioIcono}
+                        mostrarSeleccion={mostrarSeleccion}
+                        talle={talle}
+                        alPrepararLienzo={setRefCanvas}
+                        alCambiarPosicionIcono={setPosicionIcono}
+                    />
+                </div>
+
+                <div className="seccion-controles">
+                    <div className="grupo-control">
+                        <h3>Vista de la Prenda</h3>
+                        <AlternadorVista vista={vista} alCambiarVista={setVista} />
+                    </div>
+
+                    <div className="grupo-control">
+                        <h3>Color de la Remera</h3>
+                        <SelectorColor colorSeleccionado={colorRemera} alCambiarColor={setColorRemera} />
+                    </div>
+
+                    <div className="grupo-control">
+                        <h3>Elegí el Talle</h3>
+                        <SelectorTalle talleSeleccionado={talle} alCambiarTalle={setTalle} />
+                    </div>
+
+                    <div className="grupo-control">
+                        <h3>Elegí tu Diseño</h3>
+                        <SelectorIcono iconoSeleccionado={iconoSeleccionado} alCambiarIcono={setIconoSeleccionado} />
+                    </div>
+
+                    {iconoSeleccionado && (
+                        <div className="grupo-control">
+                            <h3>Ajustar Diseño</h3>
+                            <ControlesIcono
+                                tamanioIcono={tamanioIcono}
+                                alCambiarTamanioIcono={setTamanioIcono}
+                                mostrarSeleccion={mostrarSeleccion}
+                                alAlternarSeleccion={() => setMostrarSeleccion(!mostrarSeleccion)}
+                                alReiniciarPosicion={() => setPosicionIcono({ x: 300, y: 375 })}
+                            />
+                        </div>
+                    )}
+
+                    <div className="botones-accion">
+                        <BotonExportar refCanvas={refCanvas} />
+                        <BotonContacto talle={talle} colorRemera={colorRemera} vista={vista} />
+                    </div>
+
+                    <PiePagina nombreClase="pie-pagina-movil" />
+                </div>
+            </div>
+
+            <PiePagina nombreClase="pie-pagina-escritorio" />
+        </div>
+    )
+}
+
+export default Aplicacion

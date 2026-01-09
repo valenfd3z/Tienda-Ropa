@@ -1,4 +1,5 @@
-.modal-overlay {
+/* Modal Cómo Usar */
+.superposicion-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,10 +12,10 @@
     justify-content: center;
     z-index: 2000;
     padding: 20px;
-    animation: fadeIn 0.3s ease;
+    animation: aparecer 0.3s ease;
 }
 
-.modal-content {
+.contenido-modal {
     background: var(--surface-color);
     border: 1px solid var(--border-color);
     border-radius: 32px;
@@ -23,14 +24,14 @@
     width: 100%;
     position: relative;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
-    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: deslizarArriba 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     max-height: 90vh;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--primary-color) var(--surface-color);
 }
 
-.close-button {
+.boton-cerrar {
     position: absolute;
     top: 20px;
     right: 25px;
@@ -42,30 +43,30 @@
     line-height: 1;
 }
 
-.modal-content h2 {
+.contenido-modal h2 {
     font-size: 2rem;
     margin-bottom: 30px;
     color: var(--primary-color);
     text-align: center;
 }
 
-.instruction-step {
+.paso-instruccion {
     margin-bottom: 25px;
 }
 
-.instruction-step h3 {
+.paso-instruccion h3 {
     font-size: 1.1rem;
     color: var(--text-primary);
     margin-bottom: 8px;
 }
 
-.instruction-step p {
+.paso-instruccion p {
     color: var(--text-secondary);
     font-size: 1rem;
     line-height: 1.6;
 }
 
-.important-note {
+.nota-importante {
     background: rgba(102, 126, 234, 0.1);
     border-left: 4px solid var(--primary-color);
     padding: 15px;
@@ -73,12 +74,12 @@
     border-radius: 0 12px 12px 0;
 }
 
-.important-note p {
+.nota-importante p {
     color: var(--text-primary);
     font-weight: 500;
 }
 
-.got-it-button {
+.boton-entendido {
     width: 100%;
     padding: 18px;
     background: var(--primary-color);
@@ -93,12 +94,12 @@
     box-shadow: 0 10px 20px var(--primary-glow);
 }
 
-.got-it-button:hover {
+.boton-entendido:hover {
     transform: translateY(-3px);
     box-shadow: 0 15px 30px var(--primary-glow);
 }
 
-@keyframes fadeIn {
+@keyframes aparecer {
     from {
         opacity: 0;
     }
@@ -108,7 +109,7 @@
     }
 }
 
-@keyframes slideUp {
+@keyframes deslizarArriba {
     from {
         transform: translateY(30px);
         opacity: 0;
@@ -121,12 +122,12 @@
 }
 
 @media (max-width: 767px) {
-    .modal-content {
+    .contenido-modal {
         padding: 30px 20px;
         border-radius: 24px;
     }
 
-    .modal-content h2 {
+    .contenido-modal h2 {
         font-size: 1.5rem;
     }
 }

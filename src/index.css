@@ -1,13 +1,28 @@
+/*
+ * Variables globales y estilos base de la aplicación
+ */
 :root {
-  --bg-color: #000000;
-  --surface-color: #121212;
-  --surface-accent: #1a1a1a;
-  --primary-color: #667eea;
-  --primary-glow: rgba(102, 126, 234, 0.4);
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --accent-color: #00f2ff;
-  --border-color: #333333;
+  /* Colores principales */
+  --color-fondo: #000000;
+  --color-superficie: #121212;
+  --acento-superficie: #1a1a1a;
+  --color-primario: #667eea;
+  --resplandor-primario: rgba(102, 126, 234, 0.4);
+  --texto-primario: #ffffff;
+  --texto-secundario: #a0a0a0;
+  --color-acento: #00f2ff;
+  --color-borde: #333333;
+
+  /* Aliases para compatibilidad */
+  --bg-color: var(--color-fondo);
+  --surface-color: var(--color-superficie);
+  --surface-accent: var(--acento-superficie);
+  --primary-color: var(--color-primario);
+  --primary-glow: var(--resplandor-primario);
+  --text-primary: var(--texto-primario);
+  --text-secondary: var(--texto-secundario);
+  --accent-color: var(--color-acento);
+  --border-color: var(--color-borde);
 }
 
 * {
@@ -20,7 +35,7 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   background: linear-gradient(to bottom, #000000 0%, #000000 75%, #ffffff 100%);
   background-attachment: fixed;
-  color: var(--text-primary);
+  color: var(--texto-primario);
   line-height: 1.6;
   overflow-x: hidden;
   min-height: 100vh;
@@ -37,7 +52,7 @@ h3 {
   letter-spacing: -0.02em;
 }
 
-/* Custom Scrollbar */
+/* Scrollbar custom */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -47,10 +62,10 @@ h3 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--surface-accent);
+  background: var(--acento-superficie);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-color);
+  background: var(--color-primario);
 }

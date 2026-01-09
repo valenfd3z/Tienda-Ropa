@@ -1,14 +1,12 @@
-.size-selector {
+/* Selector de Talle */
+.selector-talle {
     display: flex;
     justify-content: center;
-    /* Centered instead of space-between */
     gap: 20px;
-    /* Consistent gap */
     padding: 20px 0;
-    /* Removed overflow-x to prevent clipping the 'glow' effect */
 }
 
-.size-button {
+.boton-talle {
     width: 75px;
     height: 75px;
     display: flex;
@@ -17,7 +15,6 @@
     background: var(--surface-accent);
     border: 3px solid var(--border-color);
     border-radius: 50%;
-    /* Perfect circles */
     color: var(--text-secondary);
     font-size: 1.5rem;
     font-weight: 900;
@@ -26,31 +23,31 @@
     box-shadow: 0 4px 0 var(--border-color);
 }
 
-.size-button:hover {
+.boton-talle:hover {
     border-color: var(--accent-color);
     color: var(--accent-color);
 }
 
-.size-button.selected {
+.boton-talle.seleccionado {
     background: var(--accent-color);
     border-color: var(--accent-color);
     color: #000;
     box-shadow: 0 0 20px rgba(0, 242, 255, 0.4), 0 4px 0 #008c99;
 }
 
-.size-button:active {
+.boton-talle:active {
     transform: translateY(2px);
     box-shadow: 0 2px 0 var(--border-color);
 }
 
 @media (max-width: 767px) {
-    .size-button {
+    .boton-talle {
         width: 60px;
         height: 60px;
         font-size: 1.2rem;
     }
 
-    .size-selector {
+    .selector-talle {
         gap: 10px;
     }
 }
