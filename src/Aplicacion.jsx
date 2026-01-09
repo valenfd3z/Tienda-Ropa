@@ -70,8 +70,8 @@ function Aplicacion() {
                 <div className="contenido-intro">
                     <h2>🧢 ¡Hola! Soy Nazareno</h2>
                     <p>Tu diseñador de confianza para <strong>remeras estampadas personalizadas</strong>.</p>
-                    <p>Si estás pensando en crear algo único, podés escribirme directamente. Si ya tenés una idea en mente, usá este simulador para darle vida y mostramelo.</p>
-                    <p>Cualquier consulta, no dudes en contactarme por WhatsApp o Instagram. <strong>¡Hagamos que tu estilo destaque!</strong></p>
+                    <p>Podés escribirme directamente o usar este simulador para darle vida a tu idea.</p>
+                    <p><strong>¡Hagamos que tu estilo destaque!</strong></p>
                 </div>
             </section>
 

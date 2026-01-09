@@ -236,6 +236,20 @@
         width: fit-content;
     }
 
+    .seccion-intro {
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+
+    .contenido-intro h2 {
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+    }
+
+    .contenido-intro p {
+        font-size: 0.95rem;
+    }
+
     .contenedor-app {
         display: flex;
         flex-direction: column;
