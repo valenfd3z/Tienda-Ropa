@@ -173,6 +173,36 @@
     margin-top: 50px;
 }
 
+.boton-vista-previa {
+    background: linear-gradient(135deg, #FF9800 0%, #F44336 100%);
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(244, 67, 54, 0.3);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.boton-vista-previa:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(244, 67, 54, 0.5);
+    filter: brightness(1.1);
+}
+
+.boton-vista-previa.activo {
+    background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+    box-shadow: 0 10px 20px rgba(185, 28, 28, 0.4);
+}
+
+.boton-vista-previa.activo:hover {
+    box-shadow: 0 15px 30px rgba(185, 28, 28, 0.6);
+}
+
 /* Responsive */
 @media (max-width: 1400px) {
     .boton-ayuda {

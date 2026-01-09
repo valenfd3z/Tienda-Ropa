@@ -32,6 +32,7 @@ function Aplicacion() {
     const [refCanvas, setRefCanvas] = useState(null)
     const [mostrarSeleccion, setMostrarSeleccion] = useState(true)
     const [estaModalAbierto, setEstaModalAbierto] = useState(false)
+    const [estaEnVistaPrevia, setEstaEnVistaPrevia] = useState(false)
 
     // Funciones de actualización para la estampa actual
     const actualizarEstampaActual = (cambios) => {
@@ -94,6 +95,7 @@ function Aplicacion() {
                         urlImagenRemeraPersonalizada={null}
                         estampas={estampas}
                         mostrarSeleccion={mostrarSeleccion}
+                        estaEnVistaPrevia={estaEnVistaPrevia}
                         talle={talle}
                         alPrepararLienzo={setRefCanvas}
                         alCambiarPosicionIcono={(posicion) => actualizarEstampaActual({ posicion })}
@@ -133,11 +135,18 @@ function Aplicacion() {
                                 mostrarSeleccion={mostrarSeleccion}
                                 alAlternarSeleccion={() => setMostrarSeleccion(!mostrarSeleccion)}
                                 alReiniciarPosicion={() => actualizarEstampaActual({ posicion: { x: 300, y: 375 } })}
+                                alLimpiarIcono={() => actualizarEstampaActual({ icono: null })}
                             />
                         </div>
                     )}
 
                     <div className="botones-accion">
+                        <button
+                            className={`boton-vista-previa ${estaEnVistaPrevia ? 'activo' : ''}`}
+                            onClick={() => setEstaEnVistaPrevia(!estaEnVistaPrevia)}
+                        >
+                            {estaEnVistaPrevia ? '🛑 DETENER VISTA 3D' : '🎬 VISTA PREVIA 3D'}
+                        </button>
                         <BotonExportar
                             refCanvas={refCanvas}
                             colorRemera={colorRemera}

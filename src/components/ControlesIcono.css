@@ -114,6 +114,23 @@
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
+.boton-limpiar {
+    background: rgba(220, 38, 38, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.boton-limpiar:hover {
+    background: #dc2626;
+    color: white;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
 .boton-alternar.activo {
     background: #f3f4f6;
     border-color: #d1d5db;

@@ -21,6 +21,22 @@
     transform: rotateY(180deg);
 }
 
+.tarjeta-remera.modo-preview {
+    animation: girar-3d 6s infinite linear;
+    pointer-events: none;
+    /* Deshabilitar interacción durante preview */
+}
+
+@keyframes girar-3d {
+    from {
+        transform: rotateY(0deg);
+    }
+
+    to {
+        transform: rotateY(360deg);
+    }
+}
+
 .tarjeta-remera-interna {
     position: absolute;
     width: 100%;
@@ -85,7 +101,7 @@
         height: auto;
         aspect-ratio: 600 / 750;
     }
-    
+
     .lienzo-remera {
         width: 100%;
     }

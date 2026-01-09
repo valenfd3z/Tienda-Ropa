@@ -11,6 +11,7 @@ const LienzoRemera = ({
     urlImagenRemeraPersonalizada,
     estampas,
     mostrarSeleccion,
+    estaEnVistaPrevia,
     talle,
     alPrepararLienzo,
     alCambiarPosicionIcono
@@ -151,15 +152,26 @@ const LienzoRemera = ({
         else if (colorRemera === '#000000' || colorRemera === '#1E3A8A') tolerancia = 60
         else if (colorRemera === '#DC2626') tolerancia = 70
 
+        const tolSq = tolerancia * tolerancia
+        const suavSq = suavizado * suavizado
+
         for (let i = 0; i < pixeles.length; i += 4) {
             const r = pixeles[i], g = pixeles[i + 1], b = pixeles[i + 2]
-            let distMin = 1000
-            for (const bg of coloresFondo) {
-                const dist = Math.sqrt(Math.pow(r - bg[0], 2) + Math.pow(g - bg[1], 2) + Math.pow(b - bg[2], 2))
-                if (dist < distMin) distMin = dist
+            let distMinSq = 1000000
+
+            for (let j = 0; j < coloresFondo.length; j++) {
+                const bg = coloresFondo[j]
+                const dr = r - bg[0], dg = g - bg[1], db = b - bg[2]
+                const dSq = dr * dr + dg * dg + db * db
+                if (dSq < distMinSq) distMinSq = dSq
             }
-            if (distMin < tolerancia - suavizado) pixeles[i + 3] = 0
-            else if (distMin < tolerancia) pixeles[i + 3] = ((distMin - (tolerancia - suavizado)) / suavizado) * 255
+
+            const distMin = Math.sqrt(distMinSq)
+            if (distMin < tolerancia - suavizado) {
+                pixeles[i + 3] = 0
+            } else if (distMin < tolerancia) {
+                pixeles[i + 3] = ((distMin - (tolerancia - suavizado)) / suavizado) * 255
+            }
         }
 
         ctxTemp.putImageData(datosImagen, 0, 0)
@@ -278,10 +290,23 @@ const LienzoRemera = ({
         ]).then(([imgRemera, imgIcono]) => dibujarTodo(imgRemera, imgIcono))
     }, [colorRemera, talle, vista])
 
+    // Efecto para renderizar el frente
     useEffect(() => {
-        renderizarCara(refCanvasFront.current, 'front', estampas.front, mostrarSeleccion)
-        renderizarCara(refCanvasBack.current, 'back', estampas.back, mostrarSeleccion)
-    }, [renderizarCara, estampas, mostrarSeleccion])
+        const mostrar = estaEnVistaPrevia ? false : (vista === 'front' ? mostrarSeleccion : false)
+        // Solo renderizamos si es el frente activo o si estamos en preview
+        if (vista === 'front' || estaEnVistaPrevia) {
+            renderizarCara(refCanvasFront.current, 'front', estampas.front, mostrar)
+        }
+    }, [renderizarCara, estampas.front, mostrarSeleccion, vista, estaEnVistaPrevia])
+
+    // Efecto para renderizar la espalda
+    useEffect(() => {
+        const mostrar = estaEnVistaPrevia ? false : (vista === 'back' ? mostrarSeleccion : false)
+        // Solo renderizamos si es la espalda activa o si estamos en preview
+        if (vista === 'back' || estaEnVistaPrevia) {
+            renderizarCara(refCanvasBack.current, 'back', estampas.back, mostrar)
+        }
+    }, [renderizarCara, estampas.back, mostrarSeleccion, vista, estaEnVistaPrevia])
 
     const manejarMouseDown = (v, e, canvasRef) => {
         if (v !== vista) return
@@ -318,7 +343,7 @@ const LienzoRemera = ({
             <div className="instrucciones-lienzo">
                 <p>💡 <strong>Arrastrá el diseño</strong> para posicionarlo.</p>
             </div>
-            <div className={`tarjeta-remera ${vista === 'back' ? 'girada' : ''}`}>
+            <div className={`tarjeta-remera ${vista === 'back' ? 'girada' : ''} ${estaEnVistaPrevia ? 'modo-preview' : ''}`}>
                 <div className="tarjeta-remera-interna">
                     <div className="cara-remera cara-frontal">
                         <canvas

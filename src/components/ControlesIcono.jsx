@@ -8,7 +8,8 @@ const ControlesIcono = ({
     alCambiarTamanioIcono,
     mostrarSeleccion,
     alAlternarSeleccion,
-    alReiniciarPosicion
+    alReiniciarPosicion,
+    alLimpiarIcono
 }) => {
     return (
         <div className="controles-icono">
@@ -44,6 +45,13 @@ const ControlesIcono = ({
                     title="Centra el diseño en la remera"
                 >
                     🎯 Centrar Diseño
+                </button>
+                <button
+                    className="boton-limpiar"
+                    onClick={alLimpiarIcono}
+                    title="Elimina el diseño actual"
+                >
+                    🗑️ Quitar Diseño
                 </button>
             </div>
         </div>
