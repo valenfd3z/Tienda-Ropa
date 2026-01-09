@@ -207,8 +207,22 @@ const LienzoRemera = ({
         const ctx = canvas.getContext('2d')
         const esMobile = window.innerWidth < 768
 
+        const cargarImagen = (url) => {
+            if (refCacheImagenes.current[url]) return Promise.resolve(refCacheImagenes.current[url])
+            return new Promise((resolve) => {
+                const img = new Image()
+                img.crossOrigin = 'anonymous'
+                img.onload = () => {
+                    refCacheImagenes.current[url] = img
+                    resolve(img)
+                }
+                img.src = url
+            })
+        }
+
         const dibujarTodo = async () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.imageSmoothingEnabled = false // Set once for the canvas context
 
             // --- Optimización: Cache de Remera Procesada ---
             const paramsActuales = `${colorRemera}`
@@ -235,6 +249,8 @@ const LienzoRemera = ({
             const sX = (canvas.width - sW) / 2
             const sY = (canvas.height - sH) / 2
 
+            // Limpieza y dibujo
+
             // Dibujar Remera (Sin sombras pesadas en mobile)
             if (!esMobile) {
                 ctx.save()
@@ -249,7 +265,9 @@ const LienzoRemera = ({
 
             // Dibujar Diseño
             if (diseno.icono) {
-                const imgIcono = await cargarImagen(diseno.icono.src)
+                // Si ya está en cache, se dibuja instantáneamente sin esperar el microtask del await
+                const imgIcono = refCacheImagenes.current[diseno.icono.src] || await cargarImagen(diseno.icono.src)
+
                 ctx.save()
                 if (!esMobile) {
                     ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'
@@ -273,19 +291,6 @@ const LienzoRemera = ({
             ctx.font = 'bold 14px sans-serif'
             ctx.textAlign = 'center'
             ctx.fillText(v === 'front' ? 'FRENTE' : 'ESPALDA', canvas.width / 2, canvas.height - 15)
-        }
-
-        const cargarImagen = (url) => {
-            if (refCacheImagenes.current[url]) return Promise.resolve(refCacheImagenes.current[url])
-            return new Promise((resolve) => {
-                const img = new Image()
-                img.crossOrigin = 'anonymous'
-                img.onload = () => {
-                    refCacheImagenes.current[url] = img
-                    resolve(img)
-                }
-                img.src = url
-            })
         }
 
         dibujarTodo()

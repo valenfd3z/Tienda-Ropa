@@ -1,7 +1,4 @@
-/*
- * Selector de Icono - Cuadrícula de diseños predeterminados y carga personalizada
- */
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import './SelectorIcono.css'
 
 const SelectorIcono = ({ iconoSeleccionado, alCambiarIcono }) => {
@@ -16,6 +13,14 @@ const SelectorIcono = ({ iconoSeleccionado, alCambiarIcono }) => {
         { id: 5, nombre: 'Homero', src: '/assets/iconos/homero.png' },
         { id: 6, nombre: 'Snoopy', src: '/assets/iconos/snoopy.png' },
     ]
+
+    // Pre-carga de imágenes para respuesta instantánea
+    useEffect(() => {
+        iconosPredeterminados.forEach(icono => {
+            const img = new Image()
+            img.src = icono.src
+        })
+    }, [])
 
     // Validación y carga de archivos personalizados
     const manejarCargaArchivo = (e) => {
