@@ -22,6 +22,19 @@
     position: relative;
 }
 
+.cabecera-top-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    padding-right: 20px;
+}
+
+[data-theme='light'] .cabecera-app h1 {
+    background: linear-gradient(to bottom, var(--text-primary) 30%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
 .cabecera-superior {
     display: flex;
     justify-content: center;
@@ -144,6 +157,16 @@
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
 }
 
+[data-theme='light'] .seccion-controles {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+}
+
+[data-theme='light'] .seccion-intro {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    background: linear-gradient(135deg, #ffffff 0%, #fdfdfd 100%);
+}
+
 .grupo-control {
     margin-bottom: 40px;
 }
@@ -186,6 +209,10 @@
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+[data-theme='light'] .boton-vista-previa {
+    box-shadow: 0 8px 15px rgba(244, 67, 54, 0.2);
 }
 
 .boton-vista-previa:hover {

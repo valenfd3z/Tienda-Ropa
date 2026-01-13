@@ -2,7 +2,7 @@
 .pie-pagina-app {
     margin-top: 100px;
     padding: 60px 20px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    background: transparent;
     border-top: 1px solid var(--border-color);
     text-align: center;
     position: relative;

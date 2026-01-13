@@ -2,18 +2,21 @@
  * Variables globales y estilos base de la aplicación
  */
 :root {
-  /* Colores principales */
+  /* Tema Oscuro (Por defecto) */
   --color-fondo: #000000;
   --color-superficie: #121212;
   --acento-superficie: #1a1a1a;
-  --color-primario: #667eea;
-  --resplandor-primario: rgba(102, 126, 234, 0.4);
+  --color-primario: #00a8ff;
+  /* Azul Claro / Celeste */
+  --resplandor-primario: rgba(0, 168, 255, 0.4);
   --texto-primario: #ffffff;
   --texto-secundario: #a0a0a0;
   --color-acento: #00f2ff;
   --color-borde: #333333;
+  --bg-gradient: linear-gradient(to bottom, #000000 0%, #000000 75%, #ffffff 100%);
+  --wardrobe-bg: url('/assets/wardrobe.png');
 
-  /* Aliases para compatibilidad */
+  /* Aliases */
   --bg-color: var(--color-fondo);
   --surface-color: var(--color-superficie);
   --surface-accent: var(--acento-superficie);
@@ -25,6 +28,20 @@
   --border-color: var(--color-borde);
 }
 
+[data-theme='light'] {
+  --color-fondo: #f0f2f5;
+  --color-superficie: #ffffff;
+  --acento-superficie: #e4e6eb;
+  --color-primario: #0077b6;
+  /* Celeste más profundo para contraste */
+  --resplandor-primario: rgba(0, 119, 182, 0.15);
+  --texto-primario: #1c1e21;
+  --texto-secundario: #606770;
+  --color-acento: #4cc9f0;
+  --color-borde: #dee2e6;
+  --bg-gradient: linear-gradient(135deg, #f0f2f5 0%, #ffffff 100%);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -33,7 +50,7 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  background: linear-gradient(to bottom, #000000 0%, #000000 75%, #ffffff 100%);
+  background: var(--bg-gradient);
   background-attachment: fixed;
   color: var(--texto-primario);
   line-height: 1.6;

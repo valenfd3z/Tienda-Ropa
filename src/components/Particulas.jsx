@@ -37,6 +37,19 @@ const Particulas = () => {
             }
         }
 
+        let colorBase = '255, 255, 255'
+
+        // Listener para cambios de tema
+        const observer = new MutationObserver(() => {
+            const esModoClaro = document.documentElement.getAttribute('data-theme') === 'light'
+            colorBase = esModoClaro ? '0, 0, 0' : '255, 255, 255'
+        })
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+
+        // Inicial
+        const esModoClaroInicial = document.documentElement.getAttribute('data-theme') === 'light'
+        colorBase = esModoClaroInicial ? '0, 0, 0' : '255, 255, 255'
+
         const animar = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -52,7 +65,7 @@ const Particulas = () => {
 
                 ctx.beginPath()
                 ctx.arc(p.x, p.y, p.tamanio, 0, Math.PI * 2)
-                ctx.fillStyle = `rgba(255, 255, 255, ${p.opacidad})`
+                ctx.fillStyle = `rgba(${colorBase}, ${p.opacidad})`
                 ctx.fill()
             })
 
@@ -66,6 +79,7 @@ const Particulas = () => {
         return () => {
             window.removeEventListener('resize', ajustarTamanio)
             cancelAnimationFrame(idAnimacion)
+            observer.disconnect()
         }
     }, [])
 

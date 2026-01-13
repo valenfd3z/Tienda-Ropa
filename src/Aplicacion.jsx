@@ -16,22 +16,29 @@ import Particulas from './components/Particulas'
 import ComoUsar from './components/ComoUsar'
 import PiePagina from './components/PiePagina'
 import SelectorTipoPrenda from './components/SelectorTipoPrenda'
+import AlternadorTema from './components/AlternadorTema'
+import {
+    MAPA_RECURSOS_COLORES,
+    VISTA_FRONTAL,
+    VISTA_TRASERA,
+    TIPO_REMERA
+} from './constants'
 
 function Aplicacion() {
     // Estado de la remera
     const [colorRemera, setColorRemera] = useState('#FFFFFF')
     const [talle, setTalle] = useState('M')
-    const [vista, setVista] = useState('front')
-    const [tipoPrenda, setTipoPrenda] = useState('tshirt')
+    const [vista, setVista] = useState(VISTA_FRONTAL)
+    const [tipoPrenda, setTipoPrenda] = useState(TIPO_REMERA)
 
-    // Estado de estampas por lado
+    // Estado del diseño y estampado para cada cara de la prenda
     const [estampas, setEstampas] = useState({
-        front: { icono: null, posicion: { x: 300, y: 375 }, tamanio: 150 },
-        back: { icono: null, posicion: { x: 300, y: 375 }, tamanio: 150 }
+        [VISTA_FRONTAL]: { icono: null, posicion: { x: 300, y: 375 }, tamanio: 150 },
+        [VISTA_TRASERA]: { icono: null, posicion: { x: 300, y: 375 }, tamanio: 150 }
     })
 
-    // Referencias y UI
-    const [refCanvas, setRefCanvas] = useState(null)
+    // Referencias de UI y flags de control
+    const [referenciaLienzo, setReferenciaLienzo] = useState(null)
     const [mostrarSeleccion, setMostrarSeleccion] = useState(true)
     const [estaModalAbierto, setEstaModalAbierto] = useState(false)
     const [estaEnVistaPrevia, setEstaEnVistaPrevia] = useState(false)
@@ -48,20 +55,7 @@ function Aplicacion() {
 
     // Mapeo de colores hex a nombres (para rutas de imágenes)
     const obtenerNombreColor = (color) => {
-        const mapaColores = {
-            '#FFFFFF': 'white',
-            '#6B7280': 'darkgray',
-            '#000000': 'black',
-            '#1E3A8A': 'navy',
-            '#DC2626': 'red',
-            '#16A34A': 'green',
-            '#06B6D4': 'turquoise',
-            '#7C3AED': 'purple',
-            '#EC4899': 'pink',
-            '#F97316': 'orange',
-            '#FACC15': 'yellow',
-        }
-        return mapaColores[color] || 'white'
+        return MAPA_RECURSOS_COLORES[color] || 'white'
     }
 
     return (
@@ -69,6 +63,9 @@ function Aplicacion() {
             <Particulas />
 
             <header className="cabecera-app">
+                <div className="cabecera-top-bar">
+                    <AlternadorTema />
+                </div>
                 <div className="cabecera-superior">
                     <h1>👕 NAZARENO CUSTOMS</h1>
                 </div>
@@ -100,7 +97,7 @@ function Aplicacion() {
                         mostrarSeleccion={mostrarSeleccion}
                         estaEnVistaPrevia={estaEnVistaPrevia}
                         talle={talle}
-                        alPrepararLienzo={setRefCanvas}
+                        alPrepararLienzo={setReferenciaLienzo}
                         alCambiarPosicionIcono={(posicion) => actualizarEstampaActual({ posicion })}
                     />
                 </div>
@@ -127,7 +124,7 @@ function Aplicacion() {
                     </div>
 
                     <div className="grupo-control">
-                        <h3>Elegí tu Diseño ({vista === 'front' ? 'FRENTE' : 'ESPALDA'})</h3>
+                        <h3>Elegí tu Diseño ({vista === VISTA_FRONTAL ? 'FRENTE' : 'ESPALDA'})</h3>
                         <SelectorIcono
                             iconoSeleccionado={estampaActual.icono}
                             alCambiarIcono={(icono) => actualizarEstampaActual({ icono })}
@@ -156,7 +153,7 @@ function Aplicacion() {
                             {estaEnVistaPrevia ? '🛑 DETENER VISTA 3D' : '🎬 VISTA PREVIA 3D'}
                         </button>
                         <BotonExportar
-                            refCanvas={refCanvas}
+                            refCanvas={referenciaLienzo}
                             colorRemera={colorRemera}
                             talle={talle}
                             estampas={estampas}

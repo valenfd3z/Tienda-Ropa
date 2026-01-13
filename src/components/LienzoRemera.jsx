@@ -1,16 +1,17 @@
 /*
- * Lienzo de la Remera - Canvas principal con renderizado, drag & drop y procesamiento de imágenes
- * Maneja: eliminación de fondo, teñido de colores, arrastre del diseño y exportación
+ * Lienzo de la Prenda - Componente de renderizado avanzado basado en Canvas
+ * Gestiona: procesamiento de imágenes (tinte/fondo), drag & drop y composición visual.
  */
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { eliminarFondo, tenirRemera } from '../utils/procesamientoImagen'
+import { VISTA_FRONTAL, VISTA_TRASERA, TIPO_MUSCULOSA } from '../constants'
 import './LienzoRemera.css'
 
 const LienzoRemera = ({
     colorRemera,
     vista,
     tipoPrenda,
-    urlImagenRemeraPersonalizada,
+    urlImagenRemeraPersonalizada, // Futura expansión para subida de usuario
     estampas,
     mostrarSeleccion,
     estaEnVistaPrevia,
@@ -18,229 +19,242 @@ const LienzoRemera = ({
     alPrepararLienzo,
     alCambiarPosicionIcono
 }) => {
-    const refCanvasFront = useRef(null)
-    const refCanvasBack = useRef(null)
-    const refContenedor = useRef(null)
+    // Referencias a los lienzos físicos (Frente y Espalda)
+    const referenciaLienzoFrontal = useRef(null)
+    const referenciaLienzoTrasero = useRef(null)
+    const referenciaContenedor = useRef(null)
+
+    // Estados de interacción
     const [estaArrastrando, setEstaArrastrando] = useState(false)
     const [desfaseArrastre, setDesfaseArrastre] = useState({ x: 0, y: 0 })
 
-    // Cache para evitar re-procesar imágenes
-    const refCacheImagenes = useRef({})
-    const refRemerasProcesadas = useRef({})
+    // Caché persistente para optimizar el rendimiento del renderizado
+    const cacheImagenesRaw = useRef({})
+    const cachePrendasRenderizadas = useRef({ [VISTA_FRONTAL]: null, [VISTA_TRASERA]: null, fingerprint: '' })
 
-    // Ref para acceder al estado actual desde event listeners
-    const refEstadoInterno = useRef({
+    // Control de concurrencia para evitar parpadeos en renderizados asíncronos rápidos
+    const referenciaVersionRender = useRef({ [VISTA_FRONTAL]: 0, [VISTA_TRASERA]: 0 })
+
+    // Referencia al estado actual para ser accedido desde Listeners (evita stale closures)
+    const referenciaEstado = useRef({
         estampas,
         vista,
         alCambiarPosicionIcono
     })
 
     useEffect(() => {
-        refEstadoInterno.current = {
-            estampas,
-            vista,
-            alCambiarPosicionIcono
-        }
+        referenciaEstado.current = { estampas, vista, alCambiarPosicionIcono }
     }, [estampas, vista, alCambiarPosicionIcono])
 
-    // Touch events
+    /**
+     * Gestión unificada de eventos táctiles para dispositivos móviles
+     */
     useEffect(() => {
-        const manejarTouch = (e, canvasRef) => {
-            const canvas = canvasRef.current
-            if (!canvas || refEstadoInterno.current.vista !== (canvas === refCanvasFront.current ? 'front' : 'back')) return
+        const gestionarToque = (evento, refLienzo) => {
+            const lienzo = refLienzo.current
+            const vistaLienzo = refLienzo === referenciaLienzoFrontal ? VISTA_FRONTAL : VISTA_TRASERA
 
-            const { estampas, vista } = refEstadoInterno.current
-            const estampaActual = estampas[vista]
+            if (!lienzo || referenciaEstado.current.vista !== vistaLienzo) return
+
+            const { estampas, vista: vistaActual } = referenciaEstado.current
+            const estampaActual = estampas[vistaActual]
             if (!estampaActual.icono) return
 
-            const rect = canvas.getBoundingClientRect()
-            const toque = e.touches[0]
-            const x = (toque.clientX - rect.left) * (canvas.width / rect.width)
-            const y = (toque.clientY - rect.top) * (canvas.height / rect.height)
+            const rectangulo = lienzo.getBoundingClientRect()
+            const toque = evento.touches[0]
+            const x = (toque.clientX - rectangulo.left) * (lienzo.width / rectangulo.width)
+            const y = (toque.clientY - rectangulo.top) * (lienzo.height / rectangulo.height)
 
-            if (e.type === 'touchstart') {
-                if (x >= estampaActual.posicion.x - estampaActual.tamanio / 2 && x <= estampaActual.posicion.x + estampaActual.tamanio / 2 &&
-                    y >= estampaActual.posicion.y - estampaActual.tamanio / 2 && y <= estampaActual.posicion.y + estampaActual.tamanio / 2) {
-                    e.preventDefault()
+            if (evento.type === 'touchstart') {
+                const enRangoX = x >= estampaActual.posicion.x - estampaActual.tamanio / 2 && x <= estampaActual.posicion.x + estampaActual.tamanio / 2
+                const enRangoY = y >= estampaActual.posicion.y - estampaActual.tamanio / 2 && y <= estampaActual.posicion.y + estampaActual.tamanio / 2
+
+                if (enRangoX && enRangoY) {
+                    evento.preventDefault()
                     setEstaArrastrando(true)
                     setDesfaseArrastre({ x: x - estampaActual.posicion.x, y: y - estampaActual.posicion.y })
                 }
-            } else if (e.type === 'touchmove' && estaArrastrando) {
-                e.preventDefault()
-                const { alCambiarPosicionIcono } = refEstadoInterno.current
-                alCambiarPosicionIcono({
-                    x: Math.max(estampaActual.tamanio / 2, Math.min(canvas.width - estampaActual.tamanio / 2, x - desfaseArrastre.x)),
-                    y: Math.max(estampaActual.tamanio / 2, Math.min(canvas.height - estampaActual.tamanio / 2, y - desfaseArrastre.y))
+            } else if (evento.type === 'touchmove' && estaArrastrando) {
+                evento.preventDefault()
+                const { alCambiarPosicionIcono: callbackPos } = referenciaEstado.current
+                callbackPos({
+                    x: Math.max(estampaActual.tamanio / 2, Math.min(lienzo.width - estampaActual.tamanio / 2, x - desfaseArrastre.x)),
+                    y: Math.max(estampaActual.tamanio / 2, Math.min(lienzo.height - estampaActual.tamanio / 2, y - desfaseArrastre.y))
                 })
             }
         }
 
-        const front = refCanvasFront.current
-        const back = refCanvasBack.current
+        const canvasF = referenciaLienzoFrontal.current
+        const canvasT = referenciaLienzoTrasero.current
 
-        const fStart = (e) => manejarTouch(e, refCanvasFront)
-        const fMove = (e) => manejarTouch(e, refCanvasFront)
-        const bStart = (e) => manejarTouch(e, refCanvasBack)
-        const bMove = (e) => manejarTouch(e, refCanvasBack)
-        const end = () => setEstaArrastrando(false)
+        const inicioF = (e) => gestionarToque(e, referenciaLienzoFrontal)
+        const moverF = (e) => gestionarToque(e, referenciaLienzoFrontal)
+        const inicioT = (e) => gestionarToque(e, referenciaLienzoTrasero)
+        const moverT = (e) => gestionarToque(e, referenciaLienzoTrasero)
+        const finArrastre = () => setEstaArrastrando(false)
 
-        front?.addEventListener('touchstart', fStart, { passive: false })
-        front?.addEventListener('touchmove', fMove, { passive: false })
-        back?.addEventListener('touchstart', bStart, { passive: false })
-        back?.addEventListener('touchmove', bMove, { passive: false })
-        window.addEventListener('touchend', end)
+        canvasF?.addEventListener('touchstart', inicioF, { passive: false })
+        canvasF?.addEventListener('touchmove', moverF, { passive: false })
+        canvasT?.addEventListener('touchstart', inicioT, { passive: false })
+        canvasT?.addEventListener('touchmove', moverT, { passive: false })
+        window.addEventListener('touchend', finArrastre)
 
         return () => {
-            front?.removeEventListener('touchstart', fStart)
-            front?.removeEventListener('touchmove', fMove)
-            back?.removeEventListener('touchstart', bStart)
-            back?.removeEventListener('touchmove', bMove)
-            window.removeEventListener('touchend', end)
+            canvasF?.removeEventListener('touchstart', inicioF)
+            canvasF?.removeEventListener('touchmove', moverF)
+            canvasT?.removeEventListener('touchstart', inicioT)
+            canvasT?.removeEventListener('touchmove', moverT)
+            window.removeEventListener('touchend', finArrastre)
         }
     }, [estaArrastrando, desfaseArrastre])
 
-    // Notificar cuando el canvas esté listo (usamos el frontal como referencia principal)
+    // Notificar al componente padre que el lienzo está listo
     useEffect(() => {
-        if (refCanvasFront.current) {
-            alPrepararLienzo(refCanvasFront.current)
-        }
+        if (referenciaLienzoFrontal.current) alPrepararLienzo(referenciaLienzoFrontal.current)
     }, [alPrepararLienzo])
 
-    // --- Funciones auxiliares ---
-    const obtenerUrlRemeraBase = (v) => `/assets/tshirts/${tipoPrenda}-${v}-white.png`
+    /**
+     * Motor de Renderizado Principal
+     * Compone la prenda, aplica tintes y añade el estampado con sombras dinámicas.
+     */
+    const renderizarCara = useCallback(async (lienzo, lado, diseno, forzarMostrarSeleccion) => {
+        if (!lienzo) return
 
-    const refRemeraFinalCache = useRef({ front: null, back: null, params: '' })
-    const refVersionRender = useRef({ front: 0, back: 0 })
+        const versionActual = ++referenciaVersionRender.current[lado]
+        const contexto = lienzo.getContext('2d')
+        const esMovil = window.innerWidth < 768
+        const huellaPrenda = `${tipoPrenda}-${colorRemera}`
 
-    const renderizarCara = useCallback(async (canvas, v, diseno, forzarMostrarSeleccion) => {
-        if (!canvas) return
+        // Función interna para obtener la URL base (blanca) de la prenda
+        const obtenerUrlBase = (vistaLado) => `/assets/tshirts/${tipoPrenda}-${vistaLado}-white.png`
 
-        const versionActual = ++refVersionRender.current[v]
-        const ctx = canvas.getContext('2d')
-        const esMobile = window.innerWidth < 768
-        const paramsActuales = `${tipoPrenda}-${colorRemera}`
+        const cargarActivos = async () => {
+            let imagenPrenda = null
 
-        // 1. Carga paralela de recursos
-        const cargarRecursos = async () => {
-            let remeraFinal = null
-
-            // Remera (Cache o Carga)
-            if (refRemeraFinalCache.current[v]?.params === paramsActuales) {
-                remeraFinal = refRemeraFinalCache.current[v].canvas
+            // 1. Obtención de la prenda (desde caché o carga nueva)
+            if (cachePrendasRenderizadas.current[lado]?.fingerprint === huellaPrenda) {
+                imagenPrenda = cachePrendasRenderizadas.current[lado].canvas
             } else {
-                const urlRemera = obtenerUrlRemeraBase(v)
-                const imgRemera = await new Promise((resolve, reject) => {
-                    const cache = refCacheImagenes.current[urlRemera]; if (cache) return resolve(cache)
-                    const img = new Image(); img.crossOrigin = 'anonymous'
-                    img.onload = () => { refCacheImagenes.current[urlRemera] = img; resolve(img) }
-                    img.onerror = reject; img.src = urlRemera
+                const url = obtenerUrlBase(lado)
+                const imgOriginal = await new Promise((resolve, reject) => {
+                    const cache = cacheImagenesRaw.current[url];
+                    if (cache) return resolve(cache)
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous'
+                    img.onload = () => { cacheImagenesRaw.current[url] = img; resolve(img) }
+                    img.onerror = reject; img.src = url
                 }).catch(() => null)
 
-                if (imgRemera) {
-                    const sinFondo = eliminarFondo(imgRemera, colorRemera)
-                    remeraFinal = (colorRemera !== '#FFFFFF') ? tenirRemera(sinFondo, colorRemera) : sinFondo
-                    refRemeraFinalCache.current[v] = { canvas: remeraFinal, params: paramsActuales }
+                if (imgOriginal) {
+                    const sinFondo = eliminarFondo(imgOriginal, colorRemera)
+                    imagenPrenda = (colorRemera !== '#FFFFFF') ? tenirRemera(sinFondo, colorRemera) : sinFondo
+                    cachePrendasRenderizadas.current[lado] = { canvas: imagenPrenda, fingerprint: huellaPrenda }
                 }
             }
 
-            // Icono
-            const imgIcono = diseno.icono ? await new Promise((resolve, reject) => {
-                const url = diseno.icono.src
-                if (refCacheImagenes.current[url]) return resolve(refCacheImagenes.current[url])
-                const img = new Image(); img.crossOrigin = 'anonymous'
-                img.onload = () => { refCacheImagenes.current[url] = img; resolve(img) }
-                img.onerror = reject; img.src = url
+            // 2. Obtención del estampado
+            const imagenEstampado = diseno.icono ? await new Promise((resolve, reject) => {
+                const src = diseno.icono.src
+                if (cacheImagenesRaw.current[src]) return resolve(cacheImagenesRaw.current[src])
+                const img = new Image();
+                img.crossOrigin = 'anonymous'
+                img.onload = () => { cacheImagenesRaw.current[src] = img; resolve(img) }
+                img.onerror = reject; img.src = src
             }).catch(() => null) : null
 
-            return { remeraFinal, imgIcono }
+            return { imagenPrenda, imagenEstampado }
         }
 
-        const recursos = await cargarRecursos()
+        const recursos = await cargarActivos()
 
-        // VALIDACIÓN: Si esta versión de renderizado ya es vieja, cancelar
-        if (refVersionRender.current[v] !== versionActual) return
+        // Si se inició un renderizado más nuevo durante la espera asíncrona, abortamos este
+        if (referenciaVersionRender.current[lado] !== versionActual) return
 
-        // 2. Dibujo Final
-        if (recursos.remeraFinal) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
-            ctx.imageSmoothingEnabled = true
-            ctx.imageSmoothingQuality = esMobile ? 'low' : 'high'
+        // Dibujo de la composición final
+        if (recursos.imagenPrenda) {
+            contexto.clearRect(0, 0, lienzo.width, lienzo.height)
+            contexto.imageSmoothingEnabled = true
+            contexto.imageSmoothingQuality = esMovil ? 'low' : 'high'
 
-            const { remeraFinal, imgIcono } = recursos
-            const relacionAspecto = remeraFinal.width / remeraFinal.height
-            // Factor de escala dinámico: la espalda de la musculosa es más pequeña en la imagen base, la compensamos
-            const factorEscala = tipoPrenda === 'musculosa'
-                ? (v === 'back' ? 1.35 : 1.25)
-                : 0.95
-            let sW = canvas.width * factorEscala, sH = sW / relacionAspecto
-            if (sH > canvas.height * factorEscala) { sH = canvas.height * factorEscala; sW = sH * relacionAspecto }
-            const sX = (canvas.width - sW) / 2
-            const sY = (canvas.height - sH) / 2
+            const { imagenPrenda: prenda, imagenEstampado: estampa } = recursos
+            const ratio = prenda.width / prenda.height
 
-            if (!esMobile) {
-                ctx.save();
+            // Compensación de escala según tipo de prenda
+            const escalaRef = tipoPrenda === TIPO_MUSCULOSA ? (lado === VISTA_TRASERA ? 1.35 : 1.25) : 0.95
+            let ancho = lienzo.width * escalaRef
+            let alto = ancho / ratio
 
-                // Quitamos todas las sombras suaves del contexto para que no brille
-                ctx.shadowColor = 'transparent';
-                ctx.shadowBlur = 0;
-                ctx.shadowOffsetY = 0;
-
-                // Contorno blanco sólido "seco" de 2px (estilo sticker puro, sin transparencia ni glow)
-                canvas.style.filter = `
-                    drop-shadow(2px 2px 0px #FFFFFF) 
-                    drop-shadow(-2px -2px 0px #FFFFFF) 
-                    drop-shadow(2px -2px 0px #FFFFFF) 
-                    drop-shadow(-2px 2px 0px #FFFFFF)
-                `;
-
-                ctx.drawImage(remeraFinal, sX, sY, sW, sH);
-                ctx.restore()
-            } else {
-                // En móvil también eliminamos el brillo
-                canvas.style.filter = 'drop-shadow(1px 1px 0px white) drop-shadow(-1px -1px 0px white) drop-shadow(1px -1px 0px white) drop-shadow(-1px 1px 0px white)'
-                ctx.drawImage(remeraFinal, sX, sY, sW, sH)
+            if (alto > lienzo.height * escalaRef) {
+                alto = lienzo.height * escalaRef;
+                ancho = alto * ratio
             }
 
-            if (imgIcono) {
-                ctx.save()
-                if (!esMobile) { ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3 }
-                ctx.drawImage(imgIcono, diseno.posicion.x - diseno.tamanio / 2, diseno.posicion.y - diseno.tamanio / 2, diseno.tamanio, diseno.tamanio)
-                ctx.restore()
+            const x = (lienzo.width - ancho) / 2
+            const y = (lienzo.height - alto) / 2
 
-                if (forzarMostrarSeleccion && v === vista) {
-                    ctx.strokeStyle = '#667eea'; ctx.lineWidth = 2; ctx.setLineDash([5, 5])
-                    ctx.strokeRect(diseno.posicion.x - diseno.tamanio / 2, diseno.posicion.y - diseno.tamanio / 2, diseno.tamanio, diseno.tamanio)
-                    ctx.setLineDash([])
+            // Aplicar contorno tipo sticker mediante filtro CSS
+            const intensidadSombra = esMovil ? '1px' : '2px'
+            lienzo.style.filter = `drop-shadow(${intensidadSombra} ${intensidadSombra} 0 white) drop-shadow(-${intensidadSombra} -${intensidadSombra} 0 white) drop-shadow(${intensidadSombra} -${intensidadSombra} 0 white) drop-shadow(-${intensidadSombra} ${intensidadSombra} 0 white)`
+
+            contexto.drawImage(prenda, x, y, ancho, alto)
+
+            if (estampa) {
+                contexto.save()
+                if (!esMovil) {
+                    contexto.shadowColor = 'rgba(0,0,0,0.3)';
+                    contexto.shadowBlur = 8;
+                    contexto.shadowOffsetY = 3
+                }
+                contexto.drawImage(
+                    estampa,
+                    diseno.posicion.x - diseno.tamanio / 2,
+                    diseno.posicion.y - diseno.tamanio / 2,
+                    diseno.tamanio,
+                    diseno.tamanio
+                )
+                contexto.restore()
+
+                // Dibujar marco de selección interactivo
+                if (forzarMostrarSeleccion && lado === vista) {
+                    contexto.strokeStyle = 'var(--primary-color)';
+                    contexto.lineWidth = 2;
+                    contexto.setLineDash([5, 5])
+                    contexto.strokeRect(
+                        diseno.posicion.x - diseno.tamanio / 2,
+                        diseno.posicion.y - diseno.tamanio / 2,
+                        diseno.tamanio,
+                        diseno.tamanio
+                    )
+                    contexto.setLineDash([])
                 }
             }
 
-            // Texto informativo de la vista (FRENTE / ESPALDA)
-            ctx.fillStyle = '#0a0a0a';
-            ctx.font = 'bold 15px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.shadowColor = 'transparent'; // Eliminamos brillo/sombra
-            ctx.shadowBlur = 0;
-            ctx.fillText(v === 'front' ? 'FRENTE' : 'ESPALDA', canvas.width / 2, canvas.height - 15)
+            // Etiqueta de la vista actual
+            contexto.fillStyle = 'var(--text-primary)';
+            contexto.font = 'bold 15px sans-serif';
+            contexto.textAlign = 'center';
+            contexto.fillText(lado === VISTA_FRONTAL ? 'FRENTE' : 'ESPALDA', lienzo.width / 2, lienzo.height - 15)
         }
     }, [colorRemera, vista, tipoPrenda])
 
-    // Efecto para renderizar ambos lados y mantener consistencia
+    // Sincronización del bucle de renderizado
     useEffect(() => {
-        const mostrarF = estaEnVistaPrevia ? false : (vista === 'front' ? mostrarSeleccion : false)
-        const mostrarB = estaEnVistaPrevia ? false : (vista === 'back' ? mostrarSeleccion : false)
+        const mostrarF = estaEnVistaPrevia ? false : (vista === VISTA_FRONTAL ? mostrarSeleccion : false)
+        const mostrarT = estaEnVistaPrevia ? false : (vista === VISTA_TRASERA ? mostrarSeleccion : false)
 
-        renderizarCara(refCanvasFront.current, 'front', estampas.front, mostrarF)
-        renderizarCara(refCanvasBack.current, 'back', estampas.back, mostrarB)
+        renderizarCara(referenciaLienzoFrontal.current, VISTA_FRONTAL, estampas[VISTA_FRONTAL], mostrarF)
+        renderizarCara(referenciaLienzoTrasero.current, VISTA_TRASERA, estampas[VISTA_TRASERA], mostrarT)
     }, [renderizarCara, estampas, mostrarSeleccion, vista, estaEnVistaPrevia])
 
-    const manejarMouseDown = (v, e, canvasRef) => {
-        if (v !== vista) return
-        const canvas = canvasRef.current
-        const estampaActual = estampas[v]
+    const manejarMouseDown = (lado, e, refLienzo) => {
+        if (lado !== vista) return
+        const lienzo = refLienzo.current
+        const estampaActual = estampas[lado]
         if (!estampaActual.icono) return
-        const rect = canvas.getBoundingClientRect()
-        const x = (e.clientX - rect.left) * (canvas.width / rect.width)
-        const y = (e.clientY - rect.top) * (canvas.height / rect.height)
+
+        const rect = lienzo.getBoundingClientRect()
+        const x = (e.clientX - rect.left) * (lienzo.width / rect.width)
+        const y = (e.clientY - rect.top) * (lienzo.height / rect.height)
 
         if (x >= estampaActual.posicion.x - estampaActual.tamanio / 2 && x <= estampaActual.posicion.x + estampaActual.tamanio / 2 &&
             y >= estampaActual.posicion.y - estampaActual.tamanio / 2 && y <= estampaActual.posicion.y + estampaActual.tamanio / 2) {
@@ -249,51 +263,51 @@ const LienzoRemera = ({
         }
     }
 
-    const manejarMouseMove = (v, e, canvasRef) => {
-        if (!estaArrastrando || v !== vista) return
-        const canvas = canvasRef.current
-        const estampaActual = estampas[v]
-        const rect = canvas.getBoundingClientRect()
-        const x = (e.clientX - rect.left) * (canvas.width / rect.width)
-        const y = (e.clientY - rect.top) * (canvas.height / rect.height)
+    const manejarMouseMove = (lado, e, refLienzo) => {
+        if (!estaArrastrando || lado !== vista) return
+        const lienzo = refLienzo.current
+        const estampaActual = estampas[lado]
+        const rect = lienzo.getBoundingClientRect()
+        const x = (e.clientX - rect.left) * (lienzo.width / rect.width)
+        const y = (e.clientY - rect.top) * (lienzo.height / rect.height)
 
         alCambiarPosicionIcono({
-            x: Math.max(estampaActual.tamanio / 2, Math.min(canvas.width - estampaActual.tamanio / 2, x - desfaseArrastre.x)),
-            y: Math.max(estampaActual.tamanio / 2, Math.min(canvas.height - estampaActual.tamanio / 2, y - desfaseArrastre.y))
+            x: Math.max(estampaActual.tamanio / 2, Math.min(lienzo.width - estampaActual.tamanio / 2, x - desfaseArrastre.x)),
+            y: Math.max(estampaActual.tamanio / 2, Math.min(lienzo.height - estampaActual.tamanio / 2, y - desfaseArrastre.y))
         })
     }
 
     return (
-        <div className="contenedor-lienzo-remera" ref={refContenedor}>
+        <div className="contenedor-lienzo-remera" ref={referenciaContenedor}>
             <div className="instrucciones-lienzo">
                 <p>💡 <strong>Arrastrá el diseño</strong> para posicionarlo.</p>
             </div>
-            <div className={`tarjeta-remera ${vista === 'back' ? 'girada' : ''} ${estaEnVistaPrevia ? 'modo-preview' : ''}`}>
+            <div className={`tarjeta-remera ${vista === VISTA_TRASERA ? 'girada' : ''} ${estaEnVistaPrevia ? 'modo-preview' : ''}`}>
                 <div className="tarjeta-remera-interna">
                     <div className="cara-remera cara-frontal">
                         <canvas
-                            ref={refCanvasFront}
+                            ref={referenciaLienzoFrontal}
                             width={600}
                             height={750}
                             className="lienzo-remera"
-                            onMouseDown={(e) => manejarMouseDown('front', e, refCanvasFront)}
-                            onMouseMove={(e) => manejarMouseMove('front', e, refCanvasFront)}
+                            onMouseDown={(e) => manejarMouseDown(VISTA_FRONTAL, e, referenciaLienzoFrontal)}
+                            onMouseMove={(e) => manejarMouseMove(VISTA_FRONTAL, e, referenciaLienzoFrontal)}
                             onMouseUp={() => setEstaArrastrando(false)}
                             onMouseLeave={() => setEstaArrastrando(false)}
-                            style={{ cursor: vista === 'front' && estampas.front.icono ? (estaArrastrando ? 'grabbing' : 'grab') : 'default' }}
+                            style={{ cursor: vista === VISTA_FRONTAL && estampas[VISTA_FRONTAL].icono ? (estaArrastrando ? 'grabbing' : 'grab') : 'default' }}
                         />
                     </div>
                     <div className="cara-remera cara-trasera">
                         <canvas
-                            ref={refCanvasBack}
+                            ref={referenciaLienzoTrasero}
                             width={600}
                             height={750}
                             className="lienzo-remera"
-                            onMouseDown={(e) => manejarMouseDown('back', e, refCanvasBack)}
-                            onMouseMove={(e) => manejarMouseMove('back', e, refCanvasBack)}
+                            onMouseDown={(e) => manejarMouseDown(VISTA_TRASERA, e, referenciaLienzoTrasero)}
+                            onMouseMove={(e) => manejarMouseMove(VISTA_TRASERA, e, referenciaLienzoTrasero)}
                             onMouseUp={() => setEstaArrastrando(false)}
                             onMouseLeave={() => setEstaArrastrando(false)}
-                            style={{ cursor: vista === 'back' && estampas.back.icono ? (estaArrastrando ? 'grabbing' : 'grab') : 'default' }}
+                            style={{ cursor: vista === VISTA_TRASERA && estampas[VISTA_TRASERA].icono ? (estaArrastrando ? 'grabbing' : 'grab') : 'default' }}
                         />
                     </div>
                 </div>

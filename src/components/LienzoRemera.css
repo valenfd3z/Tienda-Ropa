@@ -53,7 +53,7 @@
     justify-content: center;
     align-items: center;
     background: #000000;
-    background-image: url('/assets/wardrobe_dark.png');
+    background-image: var(--wardrobe-bg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -83,19 +83,19 @@
 }
 
 .instrucciones-lienzo {
-    background: rgba(255, 255, 255, 0.05);
-    border-left: 4px solid #667eea;
+    background: var(--surface-accent);
+    border-left: 4px solid var(--primary-color);
     padding: 12px 16px;
     border-radius: 8px;
     font-size: 0.9rem;
-    color: #eee;
+    color: var(--text-primary);
     max-width: 400px;
     text-align: center;
     margin-bottom: 5px;
 }
 
 .instrucciones-lienzo strong {
-    color: #667eea;
+    color: var(--primary-color);
 }
 
 @media (max-width: 767px) {

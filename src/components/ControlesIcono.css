@@ -13,7 +13,7 @@
 
 .control-tamanio label {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     font-size: 0.95rem;
 }
 
@@ -25,7 +25,7 @@
 
 .etiqueta-tamanio {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
     min-width: 60px;
 }
 
@@ -37,7 +37,7 @@
     flex: 1;
     height: 6px;
     border-radius: 3px;
-    background: linear-gradient(to right, #e5e7eb 0%, #667eea 100%);
+    background: linear-gradient(to right, var(--surface-accent) 0%, var(--primary-color) 100%);
     outline: none;
     -webkit-appearance: none;
     appearance: none;
@@ -49,37 +49,37 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #667eea;
+    background: var(--primary-color);
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 2px 8px var(--primary-glow);
     transition: all 0.2s ease;
 }
 
 .deslizador-tamanio::-webkit-slider-thumb:hover {
     transform: scale(1.2);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 4px 12px var(--primary-glow);
 }
 
 .deslizador-tamanio::-moz-range-thumb {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #667eea;
+    background: var(--primary-color);
     cursor: pointer;
     border: none;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 2px 8px var(--primary-glow);
     transition: all 0.2s ease;
 }
 
 .deslizador-tamanio::-moz-range-thumb:hover {
     transform: scale(1.2);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 4px 12px var(--primary-glow);
 }
 
 .valor-tamanio {
     text-align: center;
     font-weight: 600;
-    color: #667eea;
+    color: var(--primary-color);
     font-size: 1.1rem;
 }
 
@@ -92,10 +92,10 @@
 .boton-reiniciar {
     flex: 1;
     padding: 12px 15px;
-    background: white;
-    border: 2px solid #667eea;
+    background: var(--color-superficie);
+    border: 2px solid var(--primary-color);
     border-radius: 10px;
-    color: #667eea;
+    color: var(--primary-color);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
@@ -108,10 +108,10 @@
 
 .boton-alternar:hover,
 .boton-reiniciar:hover {
-    background: #667eea;
+    background: var(--primary-color);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px var(--primary-glow);
 }
 
 .boton-limpiar {

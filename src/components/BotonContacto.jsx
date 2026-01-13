@@ -2,6 +2,7 @@
  * Botones de Contacto - WhatsApp e Instagram con mensaje automático
  */
 import { useState } from 'react'
+import { MAPA_NOMBRES_COLORES } from '../constants'
 import './BotonContacto.css'
 
 const BotonContacto = ({ talle, colorRemera, vista, tipoPrenda }) => {
@@ -11,20 +12,7 @@ const BotonContacto = ({ talle, colorRemera, vista, tipoPrenda }) => {
 
     // Mapeo de colores hex a nombres legibles
     const obtenerEtiquetaColor = (color) => {
-        const mapaColores = {
-            '#FFFFFF': 'Blanco',
-            '#6B7280': 'Gris Oscuro',
-            '#000000': 'Negro',
-            '#1E3A8A': 'Azul Marino',
-            '#DC2626': 'Rojo',
-            '#16A34A': 'Verde',
-            '#06B6D4': 'Turquesa',
-            '#7C3AED': 'Morado',
-            '#EC4899': 'Rosa',
-            '#F97316': 'Naranja',
-            '#FACC15': 'Amarillo',
-        }
-        return mapaColores[color] || color
+        return MAPA_NOMBRES_COLORES[color] || color
     }
 
     // Genera el mensaje con los detalles de la remera
