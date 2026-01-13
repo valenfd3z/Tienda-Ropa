@@ -15,12 +15,14 @@ import BotonContacto from './components/BotonContacto'
 import Particulas from './components/Particulas'
 import ComoUsar from './components/ComoUsar'
 import PiePagina from './components/PiePagina'
+import SelectorTipoPrenda from './components/SelectorTipoPrenda'
 
 function Aplicacion() {
     // Estado de la remera
     const [colorRemera, setColorRemera] = useState('#FFFFFF')
     const [talle, setTalle] = useState('M')
     const [vista, setVista] = useState('front')
+    const [tipoPrenda, setTipoPrenda] = useState('tshirt')
 
     // Estado de estampas por lado
     const [estampas, setEstampas] = useState({
@@ -92,6 +94,7 @@ function Aplicacion() {
                     <LienzoRemera
                         colorRemera={colorRemera}
                         vista={vista}
+                        tipoPrenda={tipoPrenda}
                         urlImagenRemeraPersonalizada={null}
                         estampas={estampas}
                         mostrarSeleccion={mostrarSeleccion}
@@ -103,6 +106,11 @@ function Aplicacion() {
                 </div>
 
                 <div className="seccion-controles">
+                    <div className="grupo-control">
+                        <h3>Tipo de Prenda</h3>
+                        <SelectorTipoPrenda tipoSeleccionado={tipoPrenda} alCambiarTipo={setTipoPrenda} />
+                    </div>
+
                     <div className="grupo-control">
                         <h3>Vista de la Prenda</h3>
                         <AlternadorVista vista={vista} alCambiarVista={setVista} />
@@ -152,8 +160,14 @@ function Aplicacion() {
                             colorRemera={colorRemera}
                             talle={talle}
                             estampas={estampas}
+                            tipoPrenda={tipoPrenda}
                         />
-                        <BotonContacto talle={talle} colorRemera={colorRemera} vista={vista} />
+                        <BotonContacto
+                            talle={talle}
+                            colorRemera={colorRemera}
+                            vista={vista}
+                            tipoPrenda={tipoPrenda}
+                        />
                     </div>
 
                     <PiePagina nombreClase="pie-pagina-movil" />

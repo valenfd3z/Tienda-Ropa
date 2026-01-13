@@ -1,0 +1,62 @@
+.selector-tipo-prenda {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
+.opcion-tipo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+}
+
+.opcion-tipo:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.opcion-tipo.seleccionado {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.icono-tipo {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.nombre-tipo {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+    .selector-tipo-prenda {
+        gap: 0.5rem;
+    }
+    
+    .opcion-tipo {
+        padding: 0.75rem;
+    }
+
+    .icono-tipo {
+        font-size: 1.2rem;
+    }
+
+    .nombre-tipo {
+        font-size: 0.75rem;
+    }
+}

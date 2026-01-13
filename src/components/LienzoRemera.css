@@ -52,6 +52,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background: #000000;
+    background-image: url('/assets/wardrobe_dark.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
 }
 
 .cara-frontal {
@@ -65,14 +73,9 @@
 .lienzo-remera {
     max-width: 100%;
     height: auto;
-    border-radius: 12px;
-    background: #000000;
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
-    background-image: url('/assets/wardrobe_dark.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     cursor: grab;
+    background: transparent;
+    /* Ahora el canvas es transparente */
 }
 
 .lienzo-remera:active {

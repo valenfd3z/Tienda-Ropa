@@ -3,11 +3,13 @@
  * Maneja: eliminación de fondo, teñido de colores, arrastre del diseño y exportación
  */
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { eliminarFondo, tenirRemera } from '../utils/procesamientoImagen'
 import './LienzoRemera.css'
 
 const LienzoRemera = ({
     colorRemera,
     vista,
+    tipoPrenda,
     urlImagenRemeraPersonalizada,
     estampas,
     mostrarSeleccion,
@@ -105,214 +107,131 @@ const LienzoRemera = ({
     }, [alPrepararLienzo])
 
     // --- Funciones auxiliares ---
-    const obtenerUrlRemeraBase = (v) => `/assets/tshirts/tshirt-${v}-white.png`
-
-    const eliminarFondo = (img) => {
-        const llaveCache = img.src + colorRemera
-        if (refRemerasProcesadas.current[llaveCache]) return refRemerasProcesadas.current[llaveCache]
-
-        const lienzoTemp = document.createElement('canvas')
-        const ctxTemp = lienzoTemp.getContext('2d')
-        lienzoTemp.width = img.width
-        lienzoTemp.height = img.height
-        ctxTemp.drawImage(img, 0, 0)
-
-        const datosImagen = ctxTemp.getImageData(0, 0, lienzoTemp.width, lienzoTemp.height)
-        const pixeles = datosImagen.data
-        const ancho = lienzoTemp.width
-        const alto = lienzoTemp.height
-
-        const coloresFondo = []
-        const coloresVistos = new Set()
-        const agregarMuestra = (r, g, b) => {
-            const llave = `${Math.round(r / 5)},${Math.round(g / 5)},${Math.round(b / 5)}`
-            if (!coloresVistos.has(llave)) {
-                coloresVistos.add(llave)
-                coloresFondo.push([r, g, b])
-            }
-        }
-        const obtenerPixel = (x, y) => {
-            const i = (y * ancho + x) * 4
-            return [pixeles[i], pixeles[i + 1], pixeles[i + 2]]
-        }
-
-        const pasoBorde = 10
-        for (let x = 0; x < ancho; x += pasoBorde) {
-            const p1 = obtenerPixel(x, 0); agregarMuestra(p1[0], p1[1], p1[2]);
-            const p2 = obtenerPixel(x, alto - 1); agregarMuestra(p2[0], p2[1], p2[2]);
-        }
-        for (let y = 0; y < alto; y += pasoBorde) {
-            const p1 = obtenerPixel(0, y); agregarMuestra(p1[0], p1[1], p1[2]);
-            const p2 = obtenerPixel(ancho - 1, y); agregarMuestra(p2[0], p2[1], p2[2]);
-        }
-
-        let tolerancia = 60
-        let suavizado = 10
-        if (colorRemera === '#6B7280') tolerancia = 50
-        else if (colorRemera === '#000000' || colorRemera === '#1E3A8A') tolerancia = 60
-        else if (colorRemera === '#DC2626') tolerancia = 70
-
-        const tolSq = tolerancia * tolerancia
-        const suavSq = suavizado * suavizado
-
-        for (let i = 0; i < pixeles.length; i += 4) {
-            const r = pixeles[i], g = pixeles[i + 1], b = pixeles[i + 2]
-            let distMinSq = 1000000
-
-            for (let j = 0; j < coloresFondo.length; j++) {
-                const bg = coloresFondo[j]
-                const dr = r - bg[0], dg = g - bg[1], db = b - bg[2]
-                const dSq = dr * dr + dg * dg + db * db
-                if (dSq < distMinSq) distMinSq = dSq
-            }
-
-            const distMin = Math.sqrt(distMinSq)
-            if (distMin < tolerancia - suavizado) {
-                pixeles[i + 3] = 0
-            } else if (distMin < tolerancia) {
-                pixeles[i + 3] = ((distMin - (tolerancia - suavizado)) / suavizado) * 255
-            }
-        }
-
-        ctxTemp.putImageData(datosImagen, 0, 0)
-        refRemerasProcesadas.current[llaveCache] = lienzoTemp
-        return lienzoTemp
-    }
-
-    const tenirRemera = (remeraProcesada, color) => {
-        const llaveCache = `tinte|${color}|${remeraProcesada.width}x${remeraProcesada.height}|${remeraProcesada.__src || ''}`
-        if (refRemerasProcesadas.current[llaveCache]) return refRemerasProcesadas.current[llaveCache]
-
-        const lienzoTemp = document.createElement('canvas')
-        const ctxTemp = lienzoTemp.getContext('2d')
-        lienzoTemp.width = remeraProcesada.width
-        lienzoTemp.height = remeraProcesada.height
-
-        ctxTemp.drawImage(remeraProcesada, 0, 0)
-        ctxTemp.globalCompositeOperation = 'multiply'
-        ctxTemp.fillStyle = color
-        ctxTemp.fillRect(0, 0, lienzoTemp.width, lienzoTemp.height)
-        ctxTemp.globalCompositeOperation = 'destination-in'
-        ctxTemp.drawImage(remeraProcesada, 0, 0)
-        ctxTemp.globalCompositeOperation = 'source-over'
-
-        refRemerasProcesadas.current[llaveCache] = lienzoTemp
-        return lienzoTemp
-    }
+    const obtenerUrlRemeraBase = (v) => `/assets/tshirts/${tipoPrenda}-${v}-white.png`
 
     const refRemeraFinalCache = useRef({ front: null, back: null, params: '' })
+    const refVersionRender = useRef({ front: 0, back: 0 })
 
-    const renderizarCara = useCallback((canvas, v, diseno, forzarMostrarSeleccion) => {
+    const renderizarCara = useCallback(async (canvas, v, diseno, forzarMostrarSeleccion) => {
         if (!canvas) return
+
+        const versionActual = ++refVersionRender.current[v]
         const ctx = canvas.getContext('2d')
         const esMobile = window.innerWidth < 768
+        const paramsActuales = `${tipoPrenda}-${colorRemera}`
 
-        const cargarImagen = (url) => {
-            if (refCacheImagenes.current[url]) return Promise.resolve(refCacheImagenes.current[url])
-            return new Promise((resolve) => {
-                const img = new Image()
-                img.crossOrigin = 'anonymous'
-                img.onload = () => {
-                    refCacheImagenes.current[url] = img
-                    resolve(img)
+        // 1. Carga paralela de recursos
+        const cargarRecursos = async () => {
+            let remeraFinal = null
+
+            // Remera (Cache o Carga)
+            if (refRemeraFinalCache.current[v]?.params === paramsActuales) {
+                remeraFinal = refRemeraFinalCache.current[v].canvas
+            } else {
+                const urlRemera = obtenerUrlRemeraBase(v)
+                const imgRemera = await new Promise((resolve, reject) => {
+                    const cache = refCacheImagenes.current[urlRemera]; if (cache) return resolve(cache)
+                    const img = new Image(); img.crossOrigin = 'anonymous'
+                    img.onload = () => { refCacheImagenes.current[urlRemera] = img; resolve(img) }
+                    img.onerror = reject; img.src = urlRemera
+                }).catch(() => null)
+
+                if (imgRemera) {
+                    const sinFondo = eliminarFondo(imgRemera, colorRemera)
+                    remeraFinal = (colorRemera !== '#FFFFFF') ? tenirRemera(sinFondo, colorRemera) : sinFondo
+                    refRemeraFinalCache.current[v] = { canvas: remeraFinal, params: paramsActuales }
                 }
-                img.src = url
-            })
+            }
+
+            // Icono
+            const imgIcono = diseno.icono ? await new Promise((resolve, reject) => {
+                const url = diseno.icono.src
+                if (refCacheImagenes.current[url]) return resolve(refCacheImagenes.current[url])
+                const img = new Image(); img.crossOrigin = 'anonymous'
+                img.onload = () => { refCacheImagenes.current[url] = img; resolve(img) }
+                img.onerror = reject; img.src = url
+            }).catch(() => null) : null
+
+            return { remeraFinal, imgIcono }
         }
 
-        const dibujarTodo = async () => {
+        const recursos = await cargarRecursos()
+
+        // VALIDACIÓN: Si esta versión de renderizado ya es vieja, cancelar
+        if (refVersionRender.current[v] !== versionActual) return
+
+        // 2. Dibujo Final
+        if (recursos.remeraFinal) {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
-            ctx.imageSmoothingEnabled = false // Set once for the canvas context
+            ctx.imageSmoothingEnabled = true
+            ctx.imageSmoothingQuality = esMobile ? 'low' : 'high'
 
-            // --- Optimización: Cache de Remera Procesada ---
-            const paramsActuales = `${colorRemera}`
-            if (refRemeraFinalCache.current[v]?.params !== paramsActuales) {
-                const urlRemera = obtenerUrlRemeraBase(v)
-                const imgRemera = await cargarImagen(urlRemera)
-                const remeraSinFondo = eliminarFondo(imgRemera)
-                const remeraProcesada = (colorRemera !== '#FFFFFF') ? tenirRemera(remeraSinFondo, colorRemera) : remeraSinFondo
-
-                refRemeraFinalCache.current[v] = {
-                    canvas: remeraProcesada,
-                    params: paramsActuales
-                }
-            }
-
-            const remeraFinal = refRemeraFinalCache.current[v].canvas
+            const { remeraFinal, imgIcono } = recursos
             const relacionAspecto = remeraFinal.width / remeraFinal.height
-            let sW = canvas.width * 0.92
-            let sH = sW / relacionAspecto
-            if (sH > canvas.height * 0.92) {
-                sH = canvas.height * 0.92
-                sW = sH * relacionAspecto
-            }
+            // Factor de escala dinámico: la espalda de la musculosa es más pequeña en la imagen base, la compensamos
+            const factorEscala = tipoPrenda === 'musculosa'
+                ? (v === 'back' ? 1.35 : 1.25)
+                : 0.95
+            let sW = canvas.width * factorEscala, sH = sW / relacionAspecto
+            if (sH > canvas.height * factorEscala) { sH = canvas.height * factorEscala; sW = sH * relacionAspecto }
             const sX = (canvas.width - sW) / 2
             const sY = (canvas.height - sH) / 2
 
-            // Limpieza y dibujo
-
-            // Dibujar Remera (Sin sombras pesadas en mobile)
             if (!esMobile) {
-                ctx.save()
-                ctx.shadowColor = 'rgba(0,0,0,0.4)'
-                ctx.shadowBlur = 10
-                ctx.shadowOffsetY = 4
-                ctx.drawImage(remeraFinal, sX, sY, sW, sH)
+                ctx.save();
+
+                // Quitamos todas las sombras suaves del contexto para que no brille
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetY = 0;
+
+                // Contorno blanco sólido "seco" de 2px (estilo sticker puro, sin transparencia ni glow)
+                canvas.style.filter = `
+                    drop-shadow(2px 2px 0px #FFFFFF) 
+                    drop-shadow(-2px -2px 0px #FFFFFF) 
+                    drop-shadow(2px -2px 0px #FFFFFF) 
+                    drop-shadow(-2px 2px 0px #FFFFFF)
+                `;
+
+                ctx.drawImage(remeraFinal, sX, sY, sW, sH);
                 ctx.restore()
             } else {
+                // En móvil también eliminamos el brillo
+                canvas.style.filter = 'drop-shadow(1px 1px 0px white) drop-shadow(-1px -1px 0px white) drop-shadow(1px -1px 0px white) drop-shadow(-1px 1px 0px white)'
                 ctx.drawImage(remeraFinal, sX, sY, sW, sH)
             }
 
-            // Dibujar Diseño
-            if (diseno.icono) {
-                // Si ya está en cache, se dibuja instantáneamente sin esperar el microtask del await
-                const imgIcono = refCacheImagenes.current[diseno.icono.src] || await cargarImagen(diseno.icono.src)
-
+            if (imgIcono) {
                 ctx.save()
-                if (!esMobile) {
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'
-                    ctx.shadowBlur = 8
-                    ctx.shadowOffsetY = 3
-                }
+                if (!esMobile) { ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3 }
                 ctx.drawImage(imgIcono, diseno.posicion.x - diseno.tamanio / 2, diseno.posicion.y - diseno.tamanio / 2, diseno.tamanio, diseno.tamanio)
                 ctx.restore()
 
                 if (forzarMostrarSeleccion && v === vista) {
-                    ctx.strokeStyle = '#667eea'
-                    ctx.lineWidth = 2
-                    ctx.setLineDash([5, 5])
+                    ctx.strokeStyle = '#667eea'; ctx.lineWidth = 2; ctx.setLineDash([5, 5])
                     ctx.strokeRect(diseno.posicion.x - diseno.tamanio / 2, diseno.posicion.y - diseno.tamanio / 2, diseno.tamanio, diseno.tamanio)
                     ctx.setLineDash([])
                 }
             }
 
-            // Labels básicos
-            ctx.fillStyle = 'white'
-            ctx.font = 'bold 14px sans-serif'
-            ctx.textAlign = 'center'
+            // Texto informativo de la vista (FRENTE / ESPALDA)
+            ctx.fillStyle = '#0a0a0a';
+            ctx.font = 'bold 15px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'transparent'; // Eliminamos brillo/sombra
+            ctx.shadowBlur = 0;
             ctx.fillText(v === 'front' ? 'FRENTE' : 'ESPALDA', canvas.width / 2, canvas.height - 15)
         }
+    }, [colorRemera, vista, tipoPrenda])
 
-        dibujarTodo()
-    }, [colorRemera, talle, vista])
-
-    // Efecto para renderizar el frente
+    // Efecto para renderizar ambos lados y mantener consistencia
     useEffect(() => {
-        const mostrar = estaEnVistaPrevia ? false : (vista === 'front' ? mostrarSeleccion : false)
-        // Solo renderizamos si es el frente activo o si estamos en preview
-        if (vista === 'front' || estaEnVistaPrevia) {
-            renderizarCara(refCanvasFront.current, 'front', estampas.front, mostrar)
-        }
-    }, [renderizarCara, estampas.front, mostrarSeleccion, vista, estaEnVistaPrevia])
+        const mostrarF = estaEnVistaPrevia ? false : (vista === 'front' ? mostrarSeleccion : false)
+        const mostrarB = estaEnVistaPrevia ? false : (vista === 'back' ? mostrarSeleccion : false)
 
-    // Efecto para renderizar la espalda
-    useEffect(() => {
-        const mostrar = estaEnVistaPrevia ? false : (vista === 'back' ? mostrarSeleccion : false)
-        // Solo renderizamos si es la espalda activa o si estamos en preview
-        if (vista === 'back' || estaEnVistaPrevia) {
-            renderizarCara(refCanvasBack.current, 'back', estampas.back, mostrar)
-        }
-    }, [renderizarCara, estampas.back, mostrarSeleccion, vista, estaEnVistaPrevia])
+        renderizarCara(refCanvasFront.current, 'front', estampas.front, mostrarF)
+        renderizarCara(refCanvasBack.current, 'back', estampas.back, mostrarB)
+    }, [renderizarCara, estampas, mostrarSeleccion, vista, estaEnVistaPrevia])
 
     const manejarMouseDown = (v, e, canvasRef) => {
         if (v !== vista) return

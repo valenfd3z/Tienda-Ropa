@@ -14,7 +14,7 @@ const ComoUsar = ({ estaAbierto, alCerrar }) => {
 
                 <div className="paso-instruccion">
                     <h3>1. Bases del Diseño</h3>
-                    <p>Elegí el <strong>color</strong> y el <strong>talle</strong> de tu remera. Podés alternar entre la vista de <strong>Frente</strong> y <strong>Espalda</strong> en cualquier momento.</p>
+                    <p>Elegí el <strong>color</strong>, <strong>tipo de prenda</strong> y el <strong>talle</strong>. Podés alternar entre la vista de <strong>Frente</strong> y <strong>Espalda</strong> en cualquier momento.</p>
                 </div>
 
                 <div className="paso-instruccion">
@@ -24,7 +24,7 @@ const ComoUsar = ({ estaAbierto, alCerrar }) => {
 
                 <div className="paso-instruccion">
                     <h3>3. Ajustá y Personalizá</h3>
-                    <p>Mantené presionado y <strong>arrastrá el diseño</strong> sobre la remera para ubicarlo donde prefieras. Usá los controles para ajustar el <strong>tamaño</strong> de la estampa.</p>
+                    <p>Mantené presionado y <strong>arrastrá el diseño</strong> sobre la prenda para ubicarlo donde prefieras. Usá los controles para ajustar el <strong>tamaño</strong> de la estampa.</p>
                 </div>
 
                 <div className="paso-instruccion">

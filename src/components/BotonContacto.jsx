@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import './BotonContacto.css'
 
-const BotonContacto = ({ talle, colorRemera, vista }) => {
+const BotonContacto = ({ talle, colorRemera, vista, tipoPrenda }) => {
     const numeroWhatsApp = '5491135151153'
     const usuarioInstagram = 'fiebre.clothing'
     const [copiado, setCopiado] = useState(false)
@@ -29,7 +29,9 @@ const BotonContacto = ({ talle, colorRemera, vista }) => {
 
     // Genera el mensaje con los detalles de la remera
     const obtenerMensaje = () => {
-        return `¡Hola! Estuve diseñando una remera en tu web:
+        const prenda = tipoPrenda === 'musculosa' ? 'Musculosa' : 'Remera'
+        return `¡Hola! Estuve diseñando una ${prenda.toLowerCase()} en tu web:
+- Tipo: ${prenda}
 - Color: ${obtenerEtiquetaColor(colorRemera)}
 - Talle: ${talle}
 - Vista: ${vista === 'front' ? 'Frente' : 'Espalda'}
