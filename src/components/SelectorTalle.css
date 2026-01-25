@@ -1,53 +1,110 @@
-/* Selector de Talle */
+/* ========== SELECTOR DE TALLE ========== */
+
 .selector-talle {
     display: flex;
     justify-content: center;
     gap: 20px;
-    padding: 20px 0;
+    padding: 25px 0;
 }
 
 .boton-talle {
-    width: 75px;
-    height: 75px;
+    width: 80px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--surface-accent);
-    border: 3px solid var(--border-color);
+    background: var(--gradient-superficie);
+    border: 3px solid var(--color-borde);
     border-radius: 50%;
-    color: var(--text-secondary);
-    font-size: 1.5rem;
+    color: var(--texto-secundario);
+    font-size: 1.6rem;
     font-weight: 900;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 0 var(--border-color);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--sombra-md), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Asegurar que el texto esté siempre visible */
+.boton-talle>* {
+    position: relative;
+    z-index: 1;
+}
+
+.boton-talle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--gradient-primario);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.boton-talle::after {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: radial-gradient(circle, var(--resplandor-primario) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.boton-talle:hover::after {
+    opacity: 0.3;
 }
 
 .boton-talle:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
+    border-color: var(--color-primario);
+    color: var(--color-primario);
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: var(--sombra-primaria);
 }
 
 .boton-talle.seleccionado {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
-    color: #000;
-    box-shadow: 0 0 20px rgba(0, 242, 255, 0.4), 0 4px 0 #008c99;
+    background: var(--gradient-primario);
+    border-color: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    box-shadow: var(--sombra-primaria-hover), inset 0 2px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px) scale(1.05);
+    animation: talleSelected 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes talleSelected {
+    0% {
+        transform: translateY(-2px) scale(1.05);
+    }
+
+    50% {
+        transform: translateY(-6px) scale(1.15);
+    }
+
+    100% {
+        transform: translateY(-2px) scale(1.05);
+    }
+}
+
+.boton-talle.seleccionado::before {
+    opacity: 1;
 }
 
 .boton-talle:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 var(--border-color);
+    transform: translateY(0) scale(0.95);
+    box-shadow: var(--sombra-sm);
 }
 
 @media (max-width: 767px) {
     .boton-talle {
-        width: 60px;
-        height: 60px;
-        font-size: 1.2rem;
+        width: 65px;
+        height: 65px;
+        font-size: 1.3rem;
     }
 
     .selector-talle {
-        gap: 10px;
+        gap: 12px;
+        padding: 20px 0;
     }
 }

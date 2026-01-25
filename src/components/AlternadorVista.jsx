@@ -10,13 +10,13 @@ const AlternadorVista = ({ vista, alCambiarVista }) => {
                 className={`boton-vista ${vista === 'front' ? 'seleccionado' : ''}`}
                 onClick={() => alCambiarVista('front')}
             >
-                👕 Frente
+                <span>👕 Frente</span>
             </button>
             <button
                 className={`boton-vista ${vista === 'back' ? 'seleccionado' : ''}`}
                 onClick={() => alCambiarVista('back')}
             >
-                🔄 Espalda
+                <span>🔄 Espalda</span>
             </button>
         </div>
     )

@@ -41,10 +41,10 @@ Te adjunto la foto del diseño que descargué.`
     return (
         <div className="contenedor-botones-contacto">
             <button className="boton-whatsapp" onClick={manejarWhatsApp}>
-                <span className="icono">💬</span> Consultar por WhatsApp
+                <span><span className="icono">💬</span> Consultar por WhatsApp</span>
             </button>
             <button className="boton-instagram" onClick={manejarInstagram}>
-                <span className="icono">📸</span> {copiado ? '¡Mensaje Copiado!' : 'Enviar por Instagram'}
+                <span><span className="icono">📸</span> {copiado ? '¡Mensaje Copiado!' : 'Enviar por Instagram'}</span>
             </button>
             <p className="nota-contacto">
                 {copiado

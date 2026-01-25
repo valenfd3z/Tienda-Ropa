@@ -1,34 +1,73 @@
-/* Selector de Color */
+/* ========== SELECTOR DE COLOR ========== */
+
 .selector-color {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    gap: 12px;
+    padding: 8px 0;
 }
 
 .opcion-color {
     width: 100%;
     aspect-ratio: 1;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
+    border: 3px solid var(--color-borde);
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
+    box-shadow: var(--sombra-sm);
+    overflow: hidden;
+}
+
+.opcion-color::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.opcion-color:hover::before {
+    opacity: 1;
 }
 
 .opcion-color:hover {
-    transform: scale(1.1);
-    border-color: var(--primary-color);
+    transform: scale(1.15) translateY(-2px);
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-primaria);
 }
 
 .opcion-color.seleccionado {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 15px var(--primary-glow);
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 4px var(--resplandor-primario), var(--sombra-primaria);
+    transform: scale(1.1);
+    animation: colorPulse 2s ease-in-out infinite;
+}
+
+@keyframes colorPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 4px var(--resplandor-primario), var(--sombra-primaria);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px var(--resplandor-primario-intenso), var(--sombra-primaria-hover);
+    }
 }
 
 .marca-cotejo {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 16px;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 20px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.opcion-color.seleccionado .marca-cotejo {
+    transform: translate(-50%, -50%) scale(1);
 }

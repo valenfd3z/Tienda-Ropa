@@ -37,21 +37,21 @@ const ControlesIcono = ({
                     onClick={alAlternarSeleccion}
                     title="Oculta o muestra el recuadro punteado"
                 >
-                    {mostrarSeleccion ? '👁️ Ocultar Borde' : '👁️ Mostrar Borde'}
+                    <span>{mostrarSeleccion ? '👁️ Ocultar Borde' : '👁️ Mostrar Borde'}</span>
                 </button>
                 <button
                     className="boton-reiniciar"
                     onClick={alReiniciarPosicion}
                     title="Centra el diseño en la remera"
                 >
-                    🎯 Centrar Diseño
+                    <span>🎯 Centrar Diseño</span>
                 </button>
                 <button
                     className="boton-limpiar"
                     onClick={alLimpiarIcono}
                     title="Elimina el diseño actual"
                 >
-                    🗑️ Quitar Diseño
+                    <span>🗑️ Quitar Diseño</span>
                 </button>
             </div>
         </div>

@@ -14,7 +14,7 @@ const SelectorTalle = ({ talleSeleccionado, alCambiarTalle }) => {
                     className={`boton-talle ${talleSeleccionado === talle ? 'seleccionado' : ''}`}
                     onClick={() => alCambiarTalle(talle)}
                 >
-                    {talle}
+                    <span>{talle}</span>
                 </button>
             ))}
         </div>

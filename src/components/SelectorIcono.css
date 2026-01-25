@@ -1,104 +1,194 @@
-/* Selector de Icono */
+/* ========== SELECTOR DE ICONO ========== */
+
 .selector-icono {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
 }
 
+/* Grid de Iconos Predeterminados */
 .iconos-predeterminados {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 14px;
 }
 
 .opcion-icono {
-    padding: 5px;
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
+    padding: 8px;
+    background: #ffffff;
+    border: 2px solid var(--color-borde);
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    box-shadow: var(--sombra-sm);
+    position: relative;
+}
+
+.opcion-icono::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-primario);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.opcion-icono::after {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: radial-gradient(circle, var(--resplandor-primario) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.opcion-icono:hover::after {
+    opacity: 0.15;
 }
 
 .opcion-icono:hover {
-    background: #f3f4f6;
-    border-color: var(--primary-color);
-    transform: scale(1.05);
+    background: #f5f5f5;
+    border-color: var(--color-primario);
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: var(--sombra-primaria);
 }
 
 .opcion-icono.seleccionado {
-    background: #f3f4f6;
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 12px var(--primary-glow);
+    background: #ffffff;
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px var(--resplandor-primario), var(--sombra-primaria-hover);
+    transform: scale(1.05);
+}
+
+.opcion-icono.seleccionado::before {
+    opacity: 1;
 }
 
 .previsualizacion-icono {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
 }
 
+.opcion-icono:hover .previsualizacion-icono {
+    transform: scale(1.1);
+}
+
+/* Sección de Carga */
 .seccion-carga {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
 }
 
 .boton-carga {
-    padding: 15px;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-    color: white;
+    padding: 18px 24px;
+    background: var(--gradient-primario);
+    color: var(--texto-sobre-primario);
     border: none;
-    border-radius: 10px;
+    border-radius: 14px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px var(--primary-glow);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--sombra-primaria);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.boton-carga::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.boton-carga:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .boton-carga:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px var(--primary-glow);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--sombra-primaria-hover);
+}
+
+.boton-carga:active {
+    transform: translateY(-1px) scale(1);
 }
 
 .pista-carga {
-    font-size: 0.85rem;
-    color: #666;
+    font-size: 0.9rem;
+    color: var(--texto-terciario);
     text-align: center;
     margin: 0;
+    font-weight: 500;
 }
 
 .recomendacion-carga {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
+    font-size: 0.85rem;
+    color: var(--texto-secundario);
     text-align: center;
     margin: 5px 0 0 0;
+    line-height: 1.5;
 }
 
 .recomendacion-carga a {
-    color: var(--primary-color);
+    color: var(--color-primario);
     text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s ease;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.recomendacion-carga a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-primario);
+    transition: width 0.3s ease;
+}
+
+.recomendacion-carga a:hover::after {
+    width: 100%;
 }
 
 .recomendacion-carga a:hover {
-    color: var(--accent-color);
-    text-decoration: underline;
+    color: var(--color-acento);
 }
 
 @media (max-width: 767px) {
     .iconos-predeterminados {
         grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
     }
 
     .opcion-icono {
-        padding: 4px;
+        padding: 6px;
+        border-radius: 12px;
+    }
+
+    .boton-carga {
+        padding: 16px 20px;
+        font-size: 0.95rem;
     }
 }

@@ -1,22 +1,61 @@
 /*
- * Variables globales y estilos base de la aplicación
+ * Sistema de Diseño - Nazareno Customs
+ * Variables globales y estilos base premium
  */
+
 :root {
-  /* Tema Oscuro (Por defecto) */
+  /* ========== TEMA OSCURO (Por defecto) ========== */
+
+  /* Fondos y Superficies */
   --color-fondo: #000000;
-  --color-superficie: #121212;
-  --acento-superficie: #1a1a1a;
-  --color-primario: #00a8ff;
-  /* Azul Claro / Celeste */
-  --resplandor-primario: rgba(0, 168, 255, 0.4);
-  --texto-primario: #ffffff;
-  --texto-secundario: #a0a0a0;
-  --color-acento: #00f2ff;
-  --color-borde: #333333;
-  --bg-gradient: linear-gradient(to bottom, #000000 0%, #000000 75%, #ffffff 100%);
+  --color-superficie: #0a0a0a;
+  --acento-superficie: #141414;
+  --superficie-elevada: #1a1a1a;
+
+  /* Colores Primarios - Azul Celeste Premium */
+  --color-primario: #00d4ff;
+  --color-primario-hover: #33ddff;
+  --color-primario-oscuro: #00a8cc;
+  --resplandor-primario: rgba(0, 212, 255, 0.35);
+  --resplandor-primario-intenso: rgba(0, 212, 255, 0.6);
+
+  /* Colores de Acento */
+  --color-acento: #00d4ff;
+  --color-acento-secundario: #7c3aed;
+
+  /* Textos */
+  --texto-primario: #f8fafc;
+  --texto-secundario: #94a3b8;
+  --texto-terciario: #64748b;
+  --texto-sobre-primario: #0a0a0f;
+
+  /* Bordes */
+  --color-borde: #2d2d3a;
+  --color-borde-sutil: #1e1e28;
+  --color-borde-hover: #3d3d4a;
+
+  /* Gradientes */
+  --bg-gradient: linear-gradient(to bottom, #000000 0%, #000000 100%);
+  --gradient-primario: linear-gradient(135deg, #00d4ff 0%, #00a8cc 100%);
+  --gradient-superficie: linear-gradient(145deg, #141414 0%, #0a0a0a 100%);
+  --gradient-acento: linear-gradient(135deg, #00f5ff 0%, #00d4ff 50%, #7c3aed 100%);
+
+  /* Sombras */
+  --sombra-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --sombra-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --sombra-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --sombra-xl: 0 16px 48px rgba(0, 0, 0, 0.7);
+  --sombra-primaria: 0 8px 24px rgba(0, 212, 255, 0.3);
+  --sombra-primaria-hover: 0 12px 32px rgba(0, 212, 255, 0.45);
+
+  /* Efectos Glassmorphism */
+  --glass-bg: rgba(30, 30, 40, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  /* Recursos */
   --wardrobe-bg: url('/assets/wardrobe.png');
 
-  /* Aliases */
+  /* ========== ALIASES (Compatibilidad) ========== */
   --bg-color: var(--color-fondo);
   --surface-color: var(--color-superficie);
   --surface-accent: var(--acento-superficie);
@@ -29,18 +68,56 @@
 }
 
 [data-theme='light'] {
-  --color-fondo: #f0f2f5;
+  /* ========== TEMA CLARO ========== */
+
+  /* Fondos y Superficies */
+  --color-fondo: #f8fafc;
   --color-superficie: #ffffff;
-  --acento-superficie: #e4e6eb;
-  --color-primario: #0077b6;
-  /* Celeste más profundo para contraste */
-  --resplandor-primario: rgba(0, 119, 182, 0.15);
-  --texto-primario: #1c1e21;
-  --texto-secundario: #606770;
-  --color-acento: #4cc9f0;
-  --color-borde: #dee2e6;
-  --bg-gradient: linear-gradient(135deg, #f0f2f5 0%, #ffffff 100%);
+  --acento-superficie: #f1f5f9;
+  --superficie-elevada: #e2e8f0;
+
+  /* Colores Primarios - Azul Celeste Premium */
+  --color-primario: #0284c7;
+  --color-primario-hover: #0369a1;
+  --color-primario-oscuro: #075985;
+  --resplandor-primario: rgba(2, 132, 199, 0.2);
+  --resplandor-primario-intenso: rgba(2, 132, 199, 0.35);
+
+  /* Colores de Acento */
+  --color-acento: #0284c7;
+  --color-acento-secundario: #8b5cf6;
+
+  /* Textos */
+  --texto-primario: #0f172a;
+  --texto-secundario: #475569;
+  --texto-terciario: #64748b;
+  --texto-sobre-primario: #ffffff;
+
+  /* Bordes */
+  --color-borde: #e2e8f0;
+  --color-borde-sutil: #f1f5f9;
+  --color-borde-hover: #cbd5e1;
+
+  /* Gradientes */
+  --bg-gradient: radial-gradient(ellipse at top, #e0f2fe 0%, #f8fafc 50%, #ffffff 100%);
+  --gradient-primario: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  --gradient-superficie: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  --gradient-acento: linear-gradient(135deg, #06b6d4 0%, #0284c7 50%, #8b5cf6 100%);
+
+  /* Sombras */
+  --sombra-sm: 0 2px 8px rgba(15, 23, 42, 0.08);
+  --sombra-md: 0 4px 16px rgba(15, 23, 42, 0.1);
+  --sombra-lg: 0 8px 32px rgba(15, 23, 42, 0.12);
+  --sombra-xl: 0 16px 48px rgba(15, 23, 42, 0.15);
+  --sombra-primaria: 0 8px 24px rgba(2, 132, 199, 0.25);
+  --sombra-primaria-hover: 0 12px 32px rgba(2, 132, 199, 0.35);
+
+  /* Efectos Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.08);
 }
+
+/* ========== RESET Y ESTILOS BASE ========== */
 
 * {
   margin: 0;
@@ -49,7 +126,7 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
   background: var(--bg-gradient);
   background-attachment: fixed;
   color: var(--texto-primario);
@@ -58,31 +135,62 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 h1,
 h2,
-h3 {
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Inter', sans-serif;
-  font-weight: 900;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
 }
 
-/* Scrollbar custom */
+/* ========== SCROLLBAR PERSONALIZADO ========== */
+
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #000;
+  background: var(--color-fondo);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--acento-superficie);
-  border-radius: 4px;
+  border-radius: 5px;
+  border: 2px solid var(--color-fondo);
+  transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-primario);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--acento-superficie) var(--color-fondo);
+}
+
+/* ========== UTILIDADES GLOBALES ========== */
+
+.text-gradient {
+  background: var(--gradient-primario);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
 }

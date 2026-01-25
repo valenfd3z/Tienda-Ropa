@@ -1,7 +1,9 @@
+/* ========== SELECTOR DE TIPO DE PRENDA ========== */
+
 .selector-tipo-prenda {
     display: flex;
-    gap: 1rem;
-    padding: 0.5rem;
+    gap: 14px;
+    padding: 8px 0;
 }
 
 .opcion-tipo {
@@ -10,53 +12,98 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    padding: 18px 20px;
+    background: var(--gradient-superficie);
+    border: 2px solid var(--color-borde);
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: var(--text-primary);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: var(--texto-primario);
+    box-shadow: var(--sombra-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.opcion-tipo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-primario);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.opcion-tipo::after {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: radial-gradient(circle, var(--resplandor-primario) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.opcion-tipo:hover::after {
+    opacity: 0.2;
 }
 
 .opcion-tipo:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    background: var(--acento-superficie);
+    border-color: var(--color-primario);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: var(--sombra-primaria);
 }
 
 .opcion-tipo.seleccionado {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 15px var(--primary-glow);
+    background: var(--gradient-primario);
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-primaria-hover);
+    color: var(--texto-sobre-primario);
+    transform: scale(1.02);
+}
+
+.opcion-tipo.seleccionado::before {
+    opacity: 1;
 }
 
 .icono-tipo {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.opcion-tipo:hover .icono-tipo {
+    transform: scale(1.15);
 }
 
 .nombre-tipo {
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    position: relative;
+    z-index: 1;
 }
 
 @media (max-width: 768px) {
     .selector-tipo-prenda {
-        gap: 0.5rem;
+        gap: 10px;
     }
 
     .opcion-tipo {
-        padding: 0.75rem;
+        padding: 14px 16px;
     }
 
     .icono-tipo {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
+        margin-bottom: 6px;
     }
 
     .nombre-tipo {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
     }
 }

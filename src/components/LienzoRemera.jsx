@@ -174,7 +174,7 @@ const LienzoRemera = ({
         if (recursos.imagenPrenda) {
             contexto.clearRect(0, 0, lienzo.width, lienzo.height)
             contexto.imageSmoothingEnabled = true
-            contexto.imageSmoothingQuality = esMovil ? 'low' : 'high'
+            contexto.imageSmoothingQuality = esMovil ? 'medium' : 'high'
 
             const { imagenPrenda: prenda, imagenEstampado: estampa } = recursos
             const ratio = prenda.width / prenda.height
@@ -192,18 +192,18 @@ const LienzoRemera = ({
             const x = (lienzo.width - ancho) / 2
             const y = (lienzo.height - alto) / 2
 
-            // Aplicar contorno tipo sticker mediante filtro CSS
-            const intensidadSombra = esMovil ? '1px' : '2px'
-            lienzo.style.filter = `drop-shadow(${intensidadSombra} ${intensidadSombra} 0 white) drop-shadow(-${intensidadSombra} -${intensidadSombra} 0 white) drop-shadow(${intensidadSombra} -${intensidadSombra} 0 white) drop-shadow(-${intensidadSombra} ${intensidadSombra} 0 white)`
+            // Aplicar contorno tipo sticker mediante filtro CSS (más fino y realista)
+            const intensidadSombra = esMovil ? '0.5px' : '1px'
+            lienzo.style.filter = `drop-shadow(${intensidadSombra} ${intensidadSombra} 0 rgba(255,255,255,0.8)) drop-shadow(-${intensidadSombra} -${intensidadSombra} 0 rgba(255,255,255,0.8)) drop-shadow(${intensidadSombra} -${intensidadSombra} 0 rgba(255,255,255,0.8)) drop-shadow(-${intensidadSombra} ${intensidadSombra} 0 rgba(255,255,255,0.8))`
 
             contexto.drawImage(prenda, x, y, ancho, alto)
 
             if (estampa) {
                 contexto.save()
                 if (!esMovil) {
-                    contexto.shadowColor = 'rgba(0,0,0,0.3)';
-                    contexto.shadowBlur = 8;
-                    contexto.shadowOffsetY = 3
+                    contexto.shadowColor = 'rgba(0,0,0,0.25)';
+                    contexto.shadowBlur = 6;
+                    contexto.shadowOffsetY = 2
                 }
                 contexto.drawImage(
                     estampa,

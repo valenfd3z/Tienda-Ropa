@@ -1,12 +1,13 @@
-/* Lienzo de la Remera */
+/* ========== LIENZO DE LA REMERA ========== */
+
 .contenedor-lienzo-remera {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    gap: 15px;
-    perspective: 1500px;
+    padding: 25px;
+    gap: 18px;
+    perspective: 1800px;
 }
 
 .tarjeta-remera {
@@ -14,7 +15,7 @@
     height: 750px;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tarjeta-remera.girada {
@@ -22,12 +23,11 @@
 }
 
 .tarjeta-remera.modo-preview {
-    animation: girar-3d 6s infinite linear;
+    animation: rotate3D 6s infinite linear;
     pointer-events: none;
-    /* Deshabilitar interacción durante preview */
 }
 
-@keyframes girar-3d {
+@keyframes rotate3D {
     from {
         transform: rotateY(0deg);
     }
@@ -57,9 +57,14 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--sombra-xl);
+    border: 1px solid var(--color-borde);
+}
+
+[data-theme='light'] .cara-remera {
+    box-shadow: var(--sombra-lg);
 }
 
 .cara-frontal {
@@ -75,7 +80,7 @@
     height: auto;
     cursor: grab;
     background: transparent;
-    /* Ahora el canvas es transparente */
+    transition: transform 0.2s ease;
 }
 
 .lienzo-remera:active {
@@ -83,19 +88,22 @@
 }
 
 .instrucciones-lienzo {
-    background: var(--surface-accent);
-    border-left: 4px solid var(--primary-color);
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-    max-width: 400px;
+    background: var(--gradient-superficie);
+    border-left: 4px solid var(--color-primario);
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: var(--texto-primario);
+    max-width: 450px;
     text-align: center;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    box-shadow: var(--sombra-sm);
+    font-weight: 500;
 }
 
 .instrucciones-lienzo strong {
-    color: var(--primary-color);
+    color: var(--color-primario);
+    font-weight: 700;
 }
 
 @media (max-width: 767px) {
@@ -107,5 +115,15 @@
 
     .lienzo-remera {
         width: 100%;
+    }
+
+    .contenedor-lienzo-remera {
+        padding: 15px;
+        gap: 12px;
+    }
+
+    .instrucciones-lienzo {
+        font-size: 0.85rem;
+        padding: 12px 16px;
     }
 }

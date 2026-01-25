@@ -138,7 +138,7 @@ const BotonExportar = ({ colorRemera, talle, estampas, tipoPrenda }) => {
 
     return (
         <button className="boton-exportar" onClick={manejarExportacion}>
-            💾 Descargar Diseño Completo
+            <span>💾 Descargar Diseño Completo</span>
         </button>
     )
 }
